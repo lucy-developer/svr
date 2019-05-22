@@ -1,0 +1,102 @@
+
+buildscript {
+    ext {
+        kotlinVersion = '1.3.0'
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/snapshot' }
+        maven { url 'http://repo.spring.io/libs-snapshot' }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://kotlin.bintray.com/kotlinx' }
+        maven { url 'http://repo.maven.apache.org/maven2' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+    }
+}
+
+//apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'kotlin-spring'
+apply plugin: 'kotlin-allopen'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'io.spring.dependency-management'
+//plugins {
+//    id 'java'
+//    id 'org.jetbrains.kotlin.jvm' version '1.3.31'
+//    
+//}
+mainClassName = 'io.eb.svr.ApplicationKt'
+
+group 'io.eb'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'org.springframework.boot:spring-boot-starter-websocket'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.security:spring-security-oauth2-resource-server:5.1.1.RELEASE'
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.4.RELEASE'
+    compile 'org.springframework.security:spring-security-oauth2-jose:5.1.2.RELEASE'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib'
+    compile 'org.jetbrains.kotlin:kotlin-reflect:1.3.0'
+    compile 'org.jetbrains.kotlin:kotlin-maven-noarg:1.3.0'
+//    compile 'org.jetbrains.kotlinx:kotlinx-serialization-runtime'
+    compile 'org.jetbrains.kotlin:kotlin-compiler:1.3.0'
+    compile 'org.projectlombok:lombok:1.18.2'
+    compile 'org.apache.shiro:shiro-all:1.4.0'
+    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.0.0'
+    compile group: 'org.apache.ibatis', name: 'ibatis-core', version: '3.0'
+    compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+    compile 'io.jsonwebtoken:jjwt-api:0.10.5'
+    compile "com.google.guava:guava:16+"
+    compile 'joda-time:joda-time:2.9.7'
+    runtime 'io.jsonwebtoken:jjwt-impl:0.10.5'
+    runtime 'io.jsonwebtoken:jjwt-jackson:0.10.5'
+    runtime 'mysql:mysql-connector-java:8.0.13'
+    runtime 'org.postgresql:postgresql:42.2.5'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'com.googlecode.json-simple:json-simple:1.1.1'
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = sourceCompatibility
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = sourceCompatibility
+    }
+}
+
+jar {
+    enabled=true
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
+
+bootJar {
+    mainClassName = mainClassName
+}
