@@ -79,14 +79,14 @@ class CoreDataService (
 		val newCoreCodePK = CoreCodeId()
 
 		if (coreGroupCode != null) {
-			if (coreGroupCode.isEmpty) {
+//			if (coreGroupCode.isEmpty) {
 				var newCoreGroupCode = CoreGroupCode(
 					code = coreCodeRequest.groupCode, name = coreCodeRequest.groupCodeName, serviceType = coreCodeRequest.groupServiceType, description = coreCodeRequest.groupCodeDescription)
 				coreGroupCodeRepository.save(newCoreGroupCode)
 				newCoreCodePK.groupCode = newCoreGroupCode.code
-			} else {
-				newCoreCodePK.groupCode = coreCodeRequest.groupCode
-			}
+//			} else {
+//				newCoreCodePK.groupCode = coreCodeRequest.groupCode
+//			}
 		}
 
 		newCoreCodePK.code = coreCodeRequest.code
