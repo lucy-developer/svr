@@ -1,14 +1,7 @@
-package user.domain
+package io.eb.svr.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
-import org.hibernate.annotations.GenericGenerator
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
-import java.sql.Timestamp
-import java.time.Instant
 import java.io.Serializable
 import java.sql.Date
 import javax.persistence.*
@@ -35,8 +28,8 @@ data class B2BUser (
 
 	@NotBlank
 	@Size(max = 50)
-	@Column(name = "name")
-	var name: String? = null,
+	@Column(name = "username")
+	var username: String? = null,
 
 	@NotBlank
 	@Size(max = 100)
@@ -78,8 +71,8 @@ data class B2BUser (
 
 	@NotBlank
 	@Size(max = 10)
-	@Column(name = "role_id")
-	var role: String? = null
+	@Column(name = "role")
+	var role: UserRole
 
 ) : Auditable(), Serializable {
 
