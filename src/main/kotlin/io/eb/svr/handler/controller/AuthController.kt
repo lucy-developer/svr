@@ -13,6 +13,8 @@ import io.eb.svr.common.config.ApiConfig.AUTH_LOGIN_PATH
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.AUTH_REGISTER_PATH
 import io.eb.svr.common.config.ApiConfig.B2B_PATH
+import io.eb.svr.common.config.ApiConfig.SHOP_PATH
+import io.eb.svr.common.config.ApiConfig.SHOP_RECEPT_PATH
 import io.eb.svr.handler.entity.request.LoginRequest
 import io.eb.svr.handler.service.AuthService
 import javax.servlet.http.HttpServletRequest
@@ -47,4 +49,14 @@ class AuthController {
 		servlet: HttpServletRequest,
 		@RequestBody request: LoginRequest
 	) = ResponseEntity.status(OK).body(authService.b2bLogin(servlet, request))
+
+//	@PostMapping(
+//		path = ["/$SHOP_PATH/$SHOP_RECEPT_PATH"],
+//		consumes = [APPLICATION_JSON_VALUE],
+//		produces = [APPLICATION_JSON_VALUE]
+//	)
+//	fun shopRecept(
+//		servlet: HttpServletRequest,
+//		@RequestBody request:
+//	)
 }

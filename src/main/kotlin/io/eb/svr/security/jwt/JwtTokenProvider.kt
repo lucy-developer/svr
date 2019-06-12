@@ -18,6 +18,7 @@ import io.eb.svr.common.config.SecurityConfig.TOKEN_HEADER
 import io.eb.svr.common.config.SecurityConfig.TOKEN_SECRET_KEY
 import io.eb.svr.common.config.SecurityConfig.TOKEN_TYPE
 import io.eb.svr.model.entity.UserRole
+import mu.KLogging
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
@@ -30,6 +31,7 @@ class JwtTokenProvider {
 //
 //    @Value("\${security.jwt.token.expire-length:$TOKEN_EXPIRATION_TIME}")
 //    private var expirationTime: Long = -1
+    companion object : KLogging()
     private var secretKey = TOKEN_SECRET_KEY
     private var expirationTime = TOKEN_EXPIRATION_TIME
 
@@ -58,6 +60,8 @@ class JwtTokenProvider {
     @Throws(CustomException::class)
     fun getAuthenticationOrThrow(token: String): Authentication {
         val username = getUsernameOrThrow(token)
+        logger.info { "getAuthenticationOrThrow usernmae : " + username }
+
         val details = userDetails.loadUserByUsername(username)
         return UsernamePasswordAuthenticationToken(userDetails, "", details.authorities)
     }
