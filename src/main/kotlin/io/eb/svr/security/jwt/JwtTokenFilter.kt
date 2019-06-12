@@ -3,6 +3,7 @@ package io.eb.svr.security.jwt
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import io.eb.svr.exception.CustomException
+import mu.KLogging
 import java.io.IOException
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse
 class JwtTokenFilter(
     private val tokenProvider: JwtTokenProvider
 ) : OncePerRequestFilter() {
+    companion object : KLogging()
 
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
