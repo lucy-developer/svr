@@ -14,12 +14,14 @@ object ApiConfig {
 	const val AUTH_LOGIN_PATH = "login"
 	const val AUTH_REGISTER_PATH = "register"
 
-	const val SHOP_RECEPT_PATH = "recept"
+	const val RECEPT_PATH = "recept"
 
 	const val CORE_PATH = "core"
 	const val AREA_PATH = "area"
 	const val CITY_PATH = "city"
 	const val CITIES_PATH = "cities"
+	const val STPLAT_PATH = "stplat"
+	const val TYPE_PATH = "type"
 
 
 

@@ -1,7 +1,10 @@
 package io.eb.svr.handler.service
 
 import io.eb.svr.exception.CustomException
+import io.eb.svr.model.entity.Stplat
 import io.eb.svr.model.enums.AreaGroup
+import io.eb.svr.model.repository.StplatRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import javax.servlet.http.HttpServletRequest
@@ -11,6 +14,8 @@ import javax.servlet.http.HttpServletRequest
  **/
 @Service
 class CoreDataService {
+	@Autowired
+	private lateinit var stplatRepository: StplatRepository
 
 	@Throws(CustomException::class)
 	fun getCities(servlet: HttpServletRequest): ArrayList<Map<String, String>> {
@@ -44,5 +49,12 @@ class CoreDataService {
 		if (gus.isEmpty()) throw CustomException("gus data not found", HttpStatus.NOT_FOUND)
 		return gus
 	}
+
+	@Throws(CustomException::class)
+	fun getStplatByType(servlet: HttpServletRequest, type: String) : Stplat {
+		return stplatRepository.findFirstByTypeOrderByCreateDateDesc(type)
+			?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
+	}
+
 
 }

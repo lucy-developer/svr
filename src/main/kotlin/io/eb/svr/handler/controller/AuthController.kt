@@ -1,21 +1,23 @@
 package io.eb.svr.handler.controller
 
-import io.eb.svr.common.config.ApiConfig.API_VERSION
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_LOGIN_PATH
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.AUTH_REGISTER_PATH
 import io.eb.svr.common.config.ApiConfig.B2B_PATH
+import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
-import io.eb.svr.common.config.ApiConfig.SHOP_RECEPT_PATH
 import io.eb.svr.handler.entity.request.LoginRequest
+import io.eb.svr.handler.entity.request.ShopReceptRequest
 import io.eb.svr.handler.service.AuthService
 import javax.servlet.http.HttpServletRequest
 
@@ -50,13 +52,13 @@ class AuthController {
 		@RequestBody request: LoginRequest
 	) = ResponseEntity.status(OK).body(authService.b2bLogin(servlet, request))
 
-//	@PostMapping(
-//		path = ["/$SHOP_PATH/$SHOP_RECEPT_PATH"],
-//		consumes = [APPLICATION_JSON_VALUE],
-//		produces = [APPLICATION_JSON_VALUE]
-//	)
-//	fun shopRecept(
-//		servlet: HttpServletRequest,
-//		@RequestBody request:
-//	)
+	@PostMapping(
+		path = ["/$SHOP_PATH/$RECEPT_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun shopRecept(
+		servlet: HttpServletRequest,
+		@RequestBody request: ShopReceptRequest
+	) = ResponseEntity.status(CREATED).body(authService.shopRecept(servlet, request))
 }
