@@ -9,8 +9,12 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Service
 import io.eb.svr.exception.CustomException
 import io.eb.svr.handler.entity.request.LoginRequest
+import io.eb.svr.handler.entity.request.ShopReceptRequest
 import io.eb.svr.handler.entity.response.LoginResponse
+import io.eb.svr.handler.entity.response.ShopReceptResponse
+import io.eb.svr.model.entity.ReceptStore
 import io.eb.svr.model.repository.B2BUserRepository
+import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.*
@@ -33,6 +37,9 @@ class AuthService {
 
 	@Autowired
 	private lateinit var tokenProvider: JwtTokenProvider
+
+	@Autowired
+	private lateinit var receptStoreRepository: ReceptStoreRepository
 
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
@@ -63,5 +70,30 @@ class AuthService {
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
 		}
+	}
+
+	@Throws(CustomException::class)
+	fun shopRecept(servlet: HttpServletRequest, request: ShopReceptRequest) : ShopReceptResponse = with(request) {
+		var receptStore : ReceptStore = ReceptStore(
+			-1,
+			storeName = storeName,
+			serviceType = serviceType,
+			userName = userName,
+			job = job,
+			mobile1 = mobile1,
+			mobile2 = mobile2,
+			mobile3 = mobile3,
+			phone1 = phone1,
+			phone2 = phone2,
+			phone3 = phone3,
+			city = city,
+			district = district,
+			ceoName = ceoName,
+			ceoMobile1 = ceoMobile1,
+			ceoMobile2 = ceoMobile2,
+			ceoMobile3 = ceoMobile3 )
+
+		receptStore.seq = receptStoreRepository.save(receptStore).seq
+		return ShopReceptResponse(receptStore.seq)
 	}
 }

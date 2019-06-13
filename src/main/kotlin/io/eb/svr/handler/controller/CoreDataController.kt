@@ -6,6 +6,8 @@ import io.eb.svr.common.config.ApiConfig.AREA_PATH
 import io.eb.svr.common.config.ApiConfig.CITIES_PATH
 import io.eb.svr.common.config.ApiConfig.CITY_PATH
 import io.eb.svr.common.config.ApiConfig.CORE_PATH
+import io.eb.svr.common.config.ApiConfig.STPLAT_PATH
+import io.eb.svr.common.config.ApiConfig.TYPE_PATH
 import io.eb.svr.handler.service.CoreDataService
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,4 +44,12 @@ class CoreDataController {
 		servlet: HttpServletRequest,
 		@PathVariable("city") city: String
 	) = ResponseEntity.status(OK).body(coreDataService.getGusByCity(servlet, city))
+
+	@GetMapping(
+		path = ["/$STPLAT_PATH/$TYPE_PATH/{type}"],
+		produces = [APPLICATION_JSON_VALUE])
+	fun getStplatByType(
+		servlet: HttpServletRequest,
+		@PathVariable("type") type: String
+	) = ResponseEntity.status(OK).body(coreDataService.getStplatByType(servlet, type))
 }
