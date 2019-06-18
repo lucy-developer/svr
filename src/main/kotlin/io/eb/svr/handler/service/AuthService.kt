@@ -1,5 +1,6 @@
 package io.eb.svr.handler.service
 
+import io.eb.svr.common.util.SmsUtil
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Service
 import io.eb.svr.exception.CustomException
+import io.eb.svr.handler.entity.request.CertNumConfirmRequest
 import io.eb.svr.handler.entity.request.LoginRequest
 import io.eb.svr.handler.entity.request.ShopReceptRequest
 import io.eb.svr.handler.entity.response.LoginResponse
@@ -40,6 +42,9 @@ class AuthService {
 
 	@Autowired
 	private lateinit var receptStoreRepository: ReceptStoreRepository
+
+	@Autowired
+	private lateinit var smsUtil: SmsUtil
 
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
@@ -96,4 +101,19 @@ class AuthService {
 		receptStore.seq = receptStoreRepository.save(receptStore).seq
 		return ShopReceptResponse(receptStore.seq)
 	}
+
+	@Throws(CustomException::class)
+	fun certNumRequest(servlet: HttpServletRequest, request: CertNumConfirmRequest) = with(request) {
+		if (!smsUtil.certNumRequest(request)) {
+			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun certNumConfirm(servlet: HttpServletRequest, request: CertNumConfirmRequest) = with(request) {
+		if (!smsUtil.CertNumConfirm(request)) {
+			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
+		}
+	}
+
 }

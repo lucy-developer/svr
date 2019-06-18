@@ -11,8 +11,10 @@ object ApiConfig {
 	const val SHOP_PATH = "shop"
 
 	const val AUTH_PATH = "auth"
-	const val AUTH_LOGIN_PATH = "login"
-	const val AUTH_REGISTER_PATH = "register"
+	const val LOGIN_PATH = "login"
+	const val REGISTER_PATH = "register"
+	const val CERTIFICATION_REQUEST_PATH = "cert/request"
+	const val CERTIFICATION_CONFIRM_PATH = "cert/confirm"
 
 	const val RECEPT_PATH = "recept"
 
