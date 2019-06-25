@@ -40,11 +40,14 @@ class ReceptShopService {
 	fun checkIfShopNameAndCeoIsAlreadyRecept(receptStore: ReceptStore) : Boolean {
 		return receptStoreRepository.findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
 			receptStore.storeName!!, receptStore.ceoName!!, receptStore.ceoMobile1!!, receptStore.ceoMobile2!!, receptStore.mobile3!!
-		)?.let {
-			true
-		}.let {
-			false
-		}
+		).isNullOrEmpty()
+//		return receptStoreRepository.findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
+//			receptStore.storeName!!, receptStore.ceoName!!, receptStore.ceoMobile1!!, receptStore.ceoMobile2!!, receptStore.mobile3!!
+//		)?.let {
+//			true
+//		}.let {
+//			false
+//		}
 	}
 
 	fun shopReceptSearch(request: ShopReceptSearchRequest): HashMap<String, Any> {

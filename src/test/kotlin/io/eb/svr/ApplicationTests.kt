@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import io.eb.svr.model.entity.B2BUser
+import io.eb.svr.model.entity.User
 
 /**
  * Create by lucy on 2019-06-03
@@ -27,7 +27,7 @@ class ApplicationTests {
 	}
 
 	private val USER_ADMIN =
-		B2BUser("test3",  "김지연", "12345", "F", "010", "4008", "7039")
+		User("test3",  "김지연", "12345", "F", "010", "4008", "7039")
 
 	private val LOGIN_REQUEST_MIKOLAJ = """{
 	"username": "${USER_ADMIN.id}",
