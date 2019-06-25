@@ -17,6 +17,7 @@ object ApiConfig {
 	const val CERTIFICATION_CONFIRM_PATH = "cert/confirm"
 
 	const val RECEPT_PATH = "recept"
+	const val SEARCH_PATH = "search"
 
 	const val CORE_PATH = "core"
 	const val AREA_PATH = "area"
