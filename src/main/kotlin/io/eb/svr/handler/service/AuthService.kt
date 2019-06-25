@@ -16,11 +16,10 @@ import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
 import io.eb.svr.handler.entity.response.LoginResponse
 import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.ReceptStore
-import io.eb.svr.model.repository.B2BUserRepository
+import io.eb.svr.model.repository.UserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
@@ -34,7 +33,7 @@ class AuthService {
 	private lateinit var authenticationManager: AuthenticationManager
 
 	@Autowired
-	private lateinit var b2BUserRepository: B2BUserRepository
+	private lateinit var userRepository: UserRepository
 
 	@Autowired
 	private lateinit var tokenProvider: JwtTokenProvider
@@ -54,7 +53,7 @@ class AuthService {
 			val token = UsernamePasswordAuthenticationToken(request.username, request.password)
 			authenticationManager.authenticate(token)
 
-			val role = b2BUserRepository.findById(request.username)?.role
+			val role = userRepository.findById(request.username)?.role
 				?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
 
 			val password = BCryptPasswordEncoder().encode(request.password)
@@ -62,8 +61,8 @@ class AuthService {
 			logger.info("b2bUserLogin id:" + request.username + " password:"+request.password)
 
 			val userinfo = HashMap<String, String>()
-//			val b2bUser = b2BUserRepository.findB2BUsersByIdAndPassword(request.username, password)
-			val b2bUser = b2BUserRepository.findById(request.username)
+//			val b2bUser = userRepository.findB2BUsersByIdAndPassword(request.username, password)
+			val b2bUser = userRepository.findById(request.username)
 
 			if (b2bUser == null) {
 				throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
@@ -111,7 +110,7 @@ class AuthService {
 
 	@Throws(CustomException::class)
 	fun certNumRequest(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
-		if (!smsUtil.certNumRequest(request)) {
+		if (smsUtil.certNumRequest(request)) {
 			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
 		}
 	}

@@ -20,7 +20,7 @@ import javax.validation.constraints.Size
 //)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class B2BUser (
+data class User (
 	@Id
 	//@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)

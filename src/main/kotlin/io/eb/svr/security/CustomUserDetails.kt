@@ -5,17 +5,21 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-
-import io.eb.svr.model.repository.B2BUserRepository
+import io.eb.svr.model.repository.UserRepository
+import mu.KLogging
 
 @Service
 class CustomUserDetails : UserDetailsService {
+    companion object : KLogging()
+
     @Autowired
-    private lateinit var b2BUserRepository: B2BUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
-        val profile = b2BUserRepository.findById(username)
+        logger.info{ "loadUserByUsername username: " + username }
+
+        val profile = userRepository.findById(username)
             ?: throw UsernameNotFoundException("User '$username' not found")
 
         return org.springframework.security.core.userdetails.User
