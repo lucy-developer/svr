@@ -1,5 +1,6 @@
 package io.eb.svr.security
 
+import io.eb.svr.common.config.ApiConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,6 +15,7 @@ import io.eb.svr.security.jwt.JwtConfigurerAdapter
 import io.eb.svr.security.jwt.JwtTokenProvider
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
+import io.eb.svr.common.config.ApiConfig.CORE_PATH
 import io.eb.svr.common.config.SecurityConfig.PASSWORD_STRENGTH
 
 @Configuration
@@ -54,6 +56,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
 		authorizeRequests()
 			.antMatchers("/$API_VERSION/$AUTH_PATH/**").permitAll()
+			.antMatchers("/$API_VERSION/$CORE_PATH/**").permitAll()
 			.anyRequest().authenticated()
 
 		apply(JwtConfigurerAdapter(tokenProvider))
