@@ -9,9 +9,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Service
 import io.eb.svr.exception.CustomException
-import io.eb.svr.handler.entity.request.CertNumConfirmRequest
+import io.eb.svr.handler.entity.request.CertNumRequest
 import io.eb.svr.handler.entity.request.LoginRequest
 import io.eb.svr.handler.entity.request.ShopReceptRequest
+import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
 import io.eb.svr.handler.entity.response.LoginResponse
 import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.ReceptStore
@@ -19,11 +20,9 @@ import io.eb.svr.model.repository.B2BUserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import java.util.*
+import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
-import kotlin.math.log
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * Create by lucy on 2019-06-03
@@ -42,6 +41,9 @@ class AuthService {
 
 	@Autowired
 	private lateinit var receptStoreRepository: ReceptStoreRepository
+
+	@Autowired
+	private lateinit var receptShopService: ReceptShopService
 
 	@Autowired
 	private lateinit var smsUtil: SmsUtil
@@ -103,17 +105,30 @@ class AuthService {
 	}
 
 	@Throws(CustomException::class)
-	fun certNumRequest(servlet: HttpServletRequest, request: CertNumConfirmRequest) = with(request) {
+	fun certNumRequest(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
 		if (!smsUtil.certNumRequest(request)) {
 			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
 		}
 	}
 
 	@Throws(CustomException::class)
-	fun certNumConfirm(servlet: HttpServletRequest, request: CertNumConfirmRequest) = with(request) {
+	fun certNumConfirm(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
 		if (!smsUtil.CertNumConfirm(request)) {
 			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
 		}
+	}
+
+	@Throws(CustomException::class)
+	fun shopReceptSearch(servlet: HttpServletRequest, request: ShopReceptSearchRequest) : HashMap<String, Any> {
+		val data = receptShopService.shopReceptSearch(request)
+//		val result = HashM
+
+		if (data.isEmpty()) {
+			logger.debug {"shopReceptSearch is null"}
+			throw CustomException("Shop Recept order not found", HttpStatus.NOT_FOUND)
+		}
+
+		return data
 	}
 
 }

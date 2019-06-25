@@ -5,6 +5,10 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.B2B_PATH
@@ -13,12 +17,13 @@ import io.eb.svr.common.config.ApiConfig.CERTIFICATION_REQUEST_PATH
 import io.eb.svr.common.config.ApiConfig.LOGIN_PATH
 import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.REGISTER_PATH
+import io.eb.svr.common.config.ApiConfig.SEARCH_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
-import io.eb.svr.handler.entity.request.CertNumConfirmRequest
+import io.eb.svr.handler.entity.request.CertNumRequest
 import io.eb.svr.handler.entity.request.LoginRequest
 import io.eb.svr.handler.entity.request.ShopReceptRequest
+import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
 import io.eb.svr.handler.service.AuthService
-import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -70,7 +75,7 @@ class AuthController {
 	)
 	fun shopReceptCertNumRequest(
 		servlet: HttpServletRequest,
-		@RequestBody request: CertNumConfirmRequest
+		@RequestBody request: CertNumRequest
 	) = ResponseEntity.status(OK).body(authService.certNumRequest(servlet,request))
 
 	@PostMapping(
@@ -80,8 +85,19 @@ class AuthController {
 	)
 	fun certNumConfirm(
 		servlet: HttpServletRequest,
-		@RequestBody request: CertNumConfirmRequest
+		@RequestBody request: CertNumRequest
 	) = ResponseEntity.status(OK).body(authService.certNumConfirm(servlet,request))
+
+	// Shop 신청 문의 조회
+	@PostMapping(
+		path = ["/$SHOP_PATH/$RECEPT_PATH/$SEARCH_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun shopReceptSearch(
+		servlet: HttpServletRequest,
+		@RequestBody request: ShopReceptSearchRequest
+	) = ResponseEntity.status(OK).body(authService.shopReceptSearch(servlet,request))
 
 
 }

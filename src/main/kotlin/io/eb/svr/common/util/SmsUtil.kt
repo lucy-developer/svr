@@ -2,7 +2,7 @@ package io.eb.svr.common.util
 
 import io.eb.svr.common.config.UtilConfig.SMS_LIMIT_COUNT
 import io.eb.svr.exception.CustomException
-import io.eb.svr.handler.entity.request.CertNumConfirmRequest
+import io.eb.svr.handler.entity.request.CertNumRequest
 import io.eb.svr.model.entity.SmsCertify
 import io.eb.svr.model.entity.SmsCertifyPk
 import io.eb.svr.model.repository.SmsCertifyRepository
@@ -26,7 +26,7 @@ class SmsUtil {
 	private var sms_limits = SMS_LIMIT_COUNT
 
 	@Throws(CustomException::class)
-	fun certNumRequest(request: CertNumConfirmRequest) : Boolean {
+	fun certNumRequest(request: CertNumRequest) : Boolean {
 
 		val pk = SmsCertifyPk(
 			date = DateUtil.nowDate.replace("-",""),
@@ -57,7 +57,7 @@ class SmsUtil {
 	}
 
 	@Throws(CustomException::class)
-	fun CertNumConfirm(request: CertNumConfirmRequest) : Boolean {
+	fun CertNumConfirm(request: CertNumRequest) : Boolean {
 		val pk = SmsCertifyPk(
 			date = DateUtil.nowDate.replace("-",""),
 			mobile = request.mobile1+request.mobile2+request.mobile3 )
