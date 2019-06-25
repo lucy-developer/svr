@@ -1,7 +1,9 @@
 package io.eb.svr.handler.service
 
+import io.eb.svr.common.util.DateUtil
 import io.eb.svr.exception.CustomException
 import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
+import io.eb.svr.model.entity.ReceptStore
 import io.eb.svr.model.repository.ReceptStoreRepository
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.persistence.EntityNotFoundException
+import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 /**
@@ -23,6 +26,26 @@ class ReceptShopService {
 
 	@Autowired
 	private lateinit var shopService: ShopService
+
+	fun shopRecept(receptStore: ReceptStore) : Long {
+		return receptStoreRepository.save(receptStore).seq
+	}
+
+	fun getAll(servlet: HttpServletRequest) : List<ReceptStore> {
+//		return receptStoreRepository.findAll().filter {
+//		}
+		return receptStoreRepository.findAll()
+	}
+
+	fun checkIfShopNameAndCeoIsAlreadyRecept(receptStore: ReceptStore) : Boolean {
+		return receptStoreRepository.findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
+			receptStore.storeName!!, receptStore.ceoName!!, receptStore.ceoMobile1!!, receptStore.ceoMobile2!!, receptStore.mobile3!!
+		)?.let {
+			true
+		}.let {
+			false
+		}
+	}
 
 	fun shopReceptSearch(request: ShopReceptSearchRequest): HashMap<String, Any> {
 		val data = HashMap<String, Any>()

@@ -100,7 +100,12 @@ class AuthService {
 			ceoMobile2 = ceoMobile2,
 			ceoMobile3 = ceoMobile3 )
 
-		receptStore.seq = receptStoreRepository.save(receptStore).seq
+		// 중복 체크
+		if (!receptShopService.checkIfShopNameAndCeoIsAlreadyRecept(receptStore))
+			throw CustomException("Shop Recept order is Already", HttpStatus.CONFLICT)
+
+
+		receptStore.seq = receptShopService.shopRecept(receptStore)
 		return ShopReceptResponse(receptStore.seq)
 	}
 

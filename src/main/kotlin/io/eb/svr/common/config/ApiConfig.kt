@@ -9,6 +9,7 @@ object ApiConfig {
 	const val B2B_PATH = "b2b"
 	const val B2C_PATH = "b2c"
 	const val SHOP_PATH = "shop"
+	const val ADMIN_PATH = "admin"
 
 	const val AUTH_PATH = "auth"
 	const val LOGIN_PATH = "login"
