@@ -21,4 +21,8 @@ class ShopService {
 	fun searchShopById(storeId: Long) : Store {
 		return storeRepository.getOne(storeId)
 	}
+
+	fun createShop(store: Store) : Long {
+		return storeRepository.save(store).id!!
+	}
 }

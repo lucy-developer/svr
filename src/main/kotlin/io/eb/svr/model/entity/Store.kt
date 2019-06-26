@@ -1,5 +1,6 @@
 package io.eb.svr.model.entity
 
+import io.eb.svr.model.enums.ServiceType
 import org.hibernate.annotations.DynamicInsert
 import java.io.Serializable
 import javax.persistence.*
@@ -46,15 +47,22 @@ data class Store (
 	@Column(name = "information")
 	var information: String? = null,
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "service_type")
-	var serviceType: String? = null,
+	var serviceType: ServiceType? = null,
 
 	@Column(name = "online_yn")
-	var onlineYn: String? = null
+	var onlineYn: String? = null,
+
+	@Column(name = "city")
+	var city: String? = null,
+
+	@Column(name = "district")
+	var district: String? = null
 
 ) : Auditable(), Serializable {
 
-	constructor(name: String?) : this() {
-		this.name = name
-	}
+//	constructor(name: String?) : this() {
+//		this.name = name
+//	}
 }

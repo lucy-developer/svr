@@ -11,7 +11,7 @@
 
     <!-- Append to "kettle-[time].log" -->
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/kettle-${time}.log</file>
+        <file>logs/eb_api-${time}.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>

@@ -19,6 +19,7 @@ object ApiConfig {
 
 	const val RECEPT_PATH = "recept"
 	const val SEARCH_PATH = "search"
+	const val CONFIRM_PATH = "confirm"
 
 	const val CORE_PATH = "core"
 	const val AREA_PATH = "area"
