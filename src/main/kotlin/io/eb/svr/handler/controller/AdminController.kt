@@ -2,8 +2,12 @@ package io.eb.svr.handler.controller
 
 import io.eb.svr.common.config.ApiConfig.ADMIN_PATH
 import io.eb.svr.common.config.ApiConfig.API_VERSION
+import io.eb.svr.common.config.ApiConfig.CONFIRM_PATH
 import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.SEARCH_PATH
+import io.eb.svr.common.config.ApiConfig.SHOP_PATH
+import io.eb.svr.handler.entity.request.ConfirmReceptShopRequest
+import io.eb.svr.handler.entity.request.ReceptShopSearchRequest
 import io.eb.svr.handler.service.AdminService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -25,15 +29,21 @@ class AdminController {
 	private lateinit var adminService: AdminService
 
 	@GetMapping(
-		path = ["/$SEARCH_PATH/$RECEPT_PATH"],
+		path = ["/$SEARCH_PATH/$RECEPT_PATH/$SHOP_PATH"],
 		produces = [MediaType.APPLICATION_JSON_VALUE]
 	)
 	fun getReceptShopAll(
-		servlet: HttpServletRequest
-	) = ResponseEntity.status(HttpStatus.OK).body(adminService.getReceptShopAll(servlet))
+		servlet: HttpServletRequest,
+		receptShopSearchRequest: ReceptShopSearchRequest
+	) = ResponseEntity.status(HttpStatus.OK).body(adminService.getReceptShopAll(servlet, receptShopSearchRequest))
 
-//	@PostMapping(
-//		path = ["/"]
-//	)
+	@PutMapping(
+		path = ["/$CONFIRM_PATH/$RECEPT_PATH/$SHOP_PATH"],
+		consumes = [MediaType.APPLICATION_JSON_VALUE]
+	)
+	fun putConfirmReceptShopById(
+		servlet: HttpServletRequest,
+		@RequestBody request: ConfirmReceptShopRequest
+	) = ResponseEntity.status(HttpStatus.OK).body(adminService.putConfirmReceptShopById(servlet, request))
 
 }

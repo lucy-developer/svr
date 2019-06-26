@@ -15,6 +15,6 @@ data class CertNumRequest (
 	@NotBlank
 	val mobile3: String,
 
-	@NotBlank
-	val number: String
+//	@NotBlank
+	val number: String? = null
 )

@@ -110,7 +110,7 @@ class AuthService {
 
 	@Throws(CustomException::class)
 	fun certNumRequest(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
-		if (smsUtil.certNumRequest(request)) {
+		if (!smsUtil.certNumRequest(request)) {
 			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
 		}
 	}

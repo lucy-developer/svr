@@ -62,7 +62,7 @@ class SmsUtil {
 			date = DateUtil.nowDate.replace("-",""),
 			mobile = request.mobile1+request.mobile2+request.mobile3 )
 
-		smsCertifyRepository.findSmsCertifiesByPkAndCertNumber(pk, request.number).let {
+		smsCertifyRepository.findSmsCertifiesByPkAndCertNumber(pk, request.number!!).let {
 			return true
 		}.let {
 			return false
