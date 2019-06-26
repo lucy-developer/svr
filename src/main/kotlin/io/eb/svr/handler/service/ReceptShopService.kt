@@ -43,7 +43,7 @@ class ReceptShopService {
 
 	fun checkIfShopNameAndCeoIsAlreadyRecept(receptStore: ReceptStore) : Boolean {
 		return receptStoreRepository.findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
-			receptStore.storeName!!, receptStore.ceoName!!, receptStore.ceoMobile1!!, receptStore.ceoMobile2!!, receptStore.mobile3!!
+			receptStore.storeName!!, receptStore.ceoName!!, receptStore.ceoMobile1!!, receptStore.ceoMobile2!!, receptStore.mobile3!!, receptStore.serviceType!!
 		).isNullOrEmpty()
 	}
 
@@ -51,7 +51,7 @@ class ReceptShopService {
 		val data = HashMap<String, Any>()
 
 		val receptList = receptStoreRepository.findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
-				request.shopName.replace(" ", ""), request.name, request.mobile1, request.mobile2, request.mobile3)
+				request.shopName.replace(" ", ""), request.name, request.mobile1, request.mobile2, request.mobile3, request.serviceType)
 
 		var status = "N"
 		if (receptList.isNotEmpty()) {

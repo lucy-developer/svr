@@ -1,6 +1,7 @@
 package io.eb.svr.model.repository
 
 import io.eb.svr.model.entity.ReceptStore
+import io.eb.svr.model.enums.ServiceType
 import org.apache.ibatis.annotations.Param
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -25,9 +26,10 @@ interface ReceptStoreRepository :JpaRepository<ReceptStore, Long> {
 	fun findReceptStoresByCeoNameAndCeoMobile1AndCeoMobile2AndCeoMobile3AndDeleteYn(
 		userName: String, mobile1: String, mobile2:String, mobile3:String, deleteYn:String) : Optional<ReceptStore>
 
-	@Query("SELECT v from ReceptStore v where trim(v.storeName) = :storeName and v.ceoName = :userName and v.ceoMobile1 = :mobile1 and v.ceoMobile2 = :mobile2 and v.ceoMobile3 = :mobile3 order by createDate desc")
+	@Query("SELECT v from ReceptStore v where trim(v.storeName) = :storeName and v.ceoName = :userName and v.ceoMobile1 = :mobile1 and v.ceoMobile2 = :mobile2 and v.ceoMobile3 = :mobile3 and v.serviceType = :serviceType order by createDate desc")
 	fun findReceptStoresByCeoNameAndMobileAndStoreNameOrderByCreateDateDesc(
-		storeName: String, userName: String, mobile1: String, mobile2:String, mobile3:String ): List<ReceptStore>
+		storeName: String, userName: String, mobile1: String, mobile2:String, mobile3:String, serviceType: ServiceType
+	): List<ReceptStore>
 
 	//@Modifying(clearAutomatically = true)
 //	@Transactional
