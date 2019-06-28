@@ -58,7 +58,13 @@ data class Store (
 	var city: String? = null,
 
 	@Column(name = "district")
-	var district: String? = null
+	var district: String? = null,
+
+	@Column(name = "latitude", unique = false, nullable = true)
+	var latitude: Double? = null,
+
+	@Column(name = "longitude", unique = false, nullable = true)
+	var longitude: Double? = null
 
 ) : Auditable(), Serializable {
 

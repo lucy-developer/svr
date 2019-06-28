@@ -5,10 +5,6 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.B2B_PATH
@@ -19,11 +15,10 @@ import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.REGISTER_PATH
 import io.eb.svr.common.config.ApiConfig.SEARCH_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
-import io.eb.svr.handler.entity.request.CertNumRequest
-import io.eb.svr.handler.entity.request.LoginRequest
-import io.eb.svr.handler.entity.request.ShopReceptRequest
-import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
+import io.eb.svr.handler.entity.request.*
 import io.eb.svr.handler.service.AuthService
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -99,5 +94,25 @@ class AuthController {
 		@RequestBody request: ShopReceptSearchRequest
 	) = ResponseEntity.status(OK).body(authService.shopReceptSearch(servlet,request))
 
+	// 가맹점 정보 입력
+	@PutMapping(
+		path = ["/$SHOP_PATH"],
+		consumes = [APPLICATION_JSON_VALUE]
+	)
+	fun putShop(
+		servlet: HttpServletRequest,
+		@RequestBody request: ShopRequest
+	) = ResponseEntity.status(OK).body(authService.putShop(servlet,request))
+
+	// B2B 가입 신청
+//	@PostMapping(
+//		path = ["/$B2B_PATH/$REGISTER_PATH"],
+//		consumes = [APPLICATION_JSON_VALUE],
+//		produces = [APPLICATION_JSON_VALUE]
+//	)
+//	fun b2bUserRegister(
+//		servlet: HttpServletRequest,
+//		@RequestBody request: ShopReceptSearchRequest
+//	) = ResponseEntity.status(CREATED).body(authService.shopReceptSearch(servlet,request))
 
 }
