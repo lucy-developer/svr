@@ -9,17 +9,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException
 import org.springframework.stereotype.Service
 import io.eb.svr.exception.CustomException
-import io.eb.svr.handler.entity.request.CertNumRequest
-import io.eb.svr.handler.entity.request.LoginRequest
-import io.eb.svr.handler.entity.request.ShopReceptRequest
-import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
+import io.eb.svr.handler.entity.request.*
 import io.eb.svr.handler.entity.response.LoginResponse
 import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.ReceptStore
+import io.eb.svr.model.entity.Store
 import io.eb.svr.model.repository.UserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
@@ -39,13 +38,13 @@ class AuthService {
 	private lateinit var tokenProvider: JwtTokenProvider
 
 	@Autowired
-	private lateinit var receptStoreRepository: ReceptStoreRepository
-
-	@Autowired
 	private lateinit var receptShopService: ReceptShopService
 
 	@Autowired
 	private lateinit var smsUtil: SmsUtil
+
+	@Autowired
+	private lateinit var shopService: ShopService
 
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
@@ -60,7 +59,7 @@ class AuthService {
 
 			logger.info("b2bUserLogin id:" + request.username + " password:"+request.password)
 
-			val userinfo = HashMap<String, String>()
+			val userinfo = HashMap<String, Any>()
 //			val b2bUser = userRepository.findB2BUsersByIdAndPassword(request.username, password)
 			val b2bUser = userRepository.findById(request.username)
 
@@ -69,9 +68,10 @@ class AuthService {
 			}
 
 			logger.info { "b2bLogin response" }
-			userinfo.put("id", b2bUser.id!!)
+			userinfo.put("id", b2bUser.email)
+			userinfo.put("seq", b2bUser.id)
 //				userinfo.put("role", role)
-			userinfo.put("username", b2bUser.username!!)
+			userinfo.put("username", b2bUser.username)
 			return LoginResponse(tokenProvider.createToken(request.username, role), userinfo)
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
@@ -131,8 +131,32 @@ class AuthService {
 			logger.debug {"shopReceptSearch is null"}
 			throw CustomException("Shop Recept order not found", HttpStatus.NOT_FOUND)
 		}
-
 		return data
 	}
 
+	@Throws(CustomException::class)
+	fun putShop(servlet: HttpServletRequest, request: ShopRequest) {
+		val shop = try {
+			shopService.searchShopById(request.shopId)
+		} catch (exception: EntityNotFoundException) {
+			throw CustomException("shopId not found", HttpStatus.NOT_FOUND)
+		}
+
+		val newShop = Store(
+			id = shop.id,
+			name = request.shopName,
+			zipCode = request.zip,
+			address = request.address,
+			addressDetail = request.addressDetail,
+			latitude = request.latitude,
+			longitude = request.longitude,
+			phone1 = request.phone1,
+			phone2 = request.phone2,
+			phone3 = request.phone3,
+			city = request.city,
+			district = request.district
+		)
+
+		shopService.createShop(newShop)
+	}
 }

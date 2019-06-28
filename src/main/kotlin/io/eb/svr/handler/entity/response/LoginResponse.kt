@@ -5,5 +5,5 @@ package io.eb.svr.handler.entity.response
  **/
 data class LoginResponse (
 	val token: String,
-	val userInfo: HashMap<String, String>
+	val userInfo: HashMap<String, Any>
 )

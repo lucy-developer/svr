@@ -77,7 +77,7 @@ data class ReceptStore (
 	var confirmDate: LocalDateTime? = null,
 
 	@Column(name = "confirm_by", insertable = false)
-	var confirmBy: String? = null,
+	var confirmBy: Long? = null,
 
 	@Column(name = "store_id", insertable = false)
 	var storeId: Long? = null,
