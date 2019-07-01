@@ -1,6 +1,7 @@
 package io.eb.svr.handler.service
 
 import io.eb.svr.common.util.SmsUtil
+import io.eb.svr.exception.AlreadyExistsException
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -14,6 +15,7 @@ import io.eb.svr.handler.entity.response.LoginResponse
 import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.ReceptStore
 import io.eb.svr.model.entity.Store
+import io.eb.svr.model.entity.User
 import io.eb.svr.model.repository.UserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.jwt.JwtTokenProvider
@@ -45,6 +47,9 @@ class AuthService {
 
 	@Autowired
 	private lateinit var shopService: ShopService
+
+	@Autowired
+	private lateinit var userService: UserService
 
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
@@ -118,7 +123,7 @@ class AuthService {
 	@Throws(CustomException::class)
 	fun certNumConfirm(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
 		if (!smsUtil.CertNumConfirm(request)) {
-			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
+			throw CustomException("Action not allowed", HttpStatus.FORBIDDEN)
 		}
 	}
 
@@ -158,5 +163,14 @@ class AuthService {
 		)
 
 		shopService.createShop(newShop)
+	}
+
+	@Throws(AlreadyExistsException::class)
+	fun checkAccountIsAlreadyUsed(request: CheckAccountRequest) : User? {
+		if (userService.existsByEmail(request)) {
+			return userService.findByUserEmail(request.email)
+		} else {
+			throw CustomException("user not found", HttpStatus.NOT_FOUND)
+		}
 	}
 }

@@ -10,6 +10,11 @@ import java.util.*
 interface UserRepository : JpaRepository<User, Long> {
 	//@Nullable
 	fun findById(id: String) : User? // Optional<User>
+	fun findUsersByEmail(email: String) : User?
+
+	fun existsUsersByEmailAndUsernameAndMobile1AndMobile2AndMobile3(email: String, name: String, mobile1: String, mobile2: String, mobile3: String) : Boolean
+	fun existsUsersByEmail(email: String) : Boolean
+
 	fun countById(id: String) : Int
 
 	fun findB2BUsersByIdAndPassword(id: String, password: String) : User?

@@ -58,7 +58,7 @@ data class User (
 	@Column(name = "birthday", unique = false, nullable = true)
 	var birthday: Date? = null,
 
-	@Enumerated(EnumType.STRING)
+//	@Enumerated(EnumType.STRING)
 	@Size(max = 10)
 	@Column(name = "role", unique = false, nullable = false)
 	var role: UserRole

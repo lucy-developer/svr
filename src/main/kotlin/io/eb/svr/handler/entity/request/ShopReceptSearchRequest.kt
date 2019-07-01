@@ -10,7 +10,8 @@ import javax.validation.constraints.NotBlank
  **/
 data class ShopReceptSearchRequest (
 	@NotBlank
-	@Enumerated(EnumType.STRING) val serviceType: ServiceType,
+	@Enumerated(EnumType.STRING)
+	val serviceType: ServiceType,
 
 	@NotBlank
 	val shopName: String,

@@ -1,5 +1,6 @@
 package io.eb.svr.handler.controller
 
+import io.eb.svr.common.config.ApiConfig.ACCOUNT_USE_CHECK_PATH
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.CREATED
@@ -15,6 +16,7 @@ import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.REGISTER_PATH
 import io.eb.svr.common.config.ApiConfig.SEARCH_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
+import io.eb.svr.common.config.ApiConfig.USER_PATH
 import io.eb.svr.handler.entity.request.*
 import io.eb.svr.handler.service.AuthService
 import org.springframework.http.HttpStatus
@@ -103,6 +105,15 @@ class AuthController {
 		servlet: HttpServletRequest,
 		@RequestBody request: ShopRequest
 	) = ResponseEntity.status(OK).body(authService.putShop(servlet,request))
+
+	@PostMapping(
+		path = ["/$USER_PATH/$ACCOUNT_USE_CHECK_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun checkAccountIsAlreadyUsed(
+		@RequestBody request: CheckAccountRequest
+	) = ResponseEntity.status(OK).body(authService.checkAccountIsAlreadyUsed(request))
 
 	// B2B 가입 신청
 //	@PostMapping(
