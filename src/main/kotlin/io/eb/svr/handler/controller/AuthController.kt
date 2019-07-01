@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.B2B_PATH
+import io.eb.svr.common.config.ApiConfig.B2C_PATH
 import io.eb.svr.common.config.ApiConfig.CERTIFICATION_CONFIRM_PATH
 import io.eb.svr.common.config.ApiConfig.CERTIFICATION_REQUEST_PATH
 import io.eb.svr.common.config.ApiConfig.LOGIN_PATH
@@ -114,6 +115,17 @@ class AuthController {
 	fun checkAccountIsAlreadyUsed(
 		@RequestBody request: CheckAccountRequest
 	) = ResponseEntity.status(OK).body(authService.checkAccountIsAlreadyUsed(request))
+
+	// B2C 가입 신청
+	@PostMapping(
+		path = ["/$USER_PATH/$B2C_PATH/$REGISTER_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun b2cUserRegister(
+		servlet: HttpServletRequest,
+		@RequestBody request: UserRegisterRequest
+	) = ResponseEntity.status(CREATED).body(authService.b2cUserRegister(request))
 
 	// B2B 가입 신청
 //	@PostMapping(

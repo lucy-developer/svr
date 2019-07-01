@@ -34,4 +34,11 @@ class UserService {
 			request.email, request.name, request.mobile1, request.mobile2, request.mobile3
 		)
 	}
+
+	@Throws(CustomException::class)
+	fun createUser(request: User): User {
+		return userRepository.save(request)
+	}
+
+
 }

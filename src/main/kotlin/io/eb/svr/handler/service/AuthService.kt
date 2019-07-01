@@ -16,10 +16,13 @@ import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.ReceptStore
 import io.eb.svr.model.entity.Store
 import io.eb.svr.model.entity.User
+import io.eb.svr.model.entity.UserRole
 import io.eb.svr.model.repository.UserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
+import io.eb.svr.security.DefaultValidator
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
@@ -32,6 +35,9 @@ class AuthService {
 	companion object : KLogging()
 	@Autowired
 	private lateinit var authenticationManager: AuthenticationManager
+
+	@Autowired
+	private lateinit var passwordEncoder: PasswordEncoder
 
 	@Autowired
 	private lateinit var userRepository: UserRepository
@@ -50,6 +56,8 @@ class AuthService {
 
 	@Autowired
 	private lateinit var userService: UserService
+
+
 
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
@@ -116,7 +124,7 @@ class AuthService {
 	@Throws(CustomException::class)
 	fun certNumRequest(servlet: HttpServletRequest, request: CertNumRequest) = with(request) {
 		if (!smsUtil.certNumRequest(request)) {
-			throw CustomException("Action not allowed", HttpStatus.UNAUTHORIZED)
+			throw CustomException("Action not allowed", HttpStatus.CONFLICT)
 		}
 	}
 
@@ -171,6 +179,44 @@ class AuthService {
 			return userService.findByUserEmail(request.email)
 		} else {
 			throw CustomException("user not found", HttpStatus.NOT_FOUND)
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun b2cUserRegister(request: UserRegisterRequest) = with(request) {
+		val user = userService.findByUserEmail(request.email)
+
+		if (user != null) {
+			throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
+//			if ( (user!!.id != request.id) ||
+//				 (user!!.email != request.email) ){
+//				throw CustomException("Userid is not allowed", HttpStatus.CONFLICT)
+//			}
+//			else {
+//				val newUser = User(
+//					id = request.id,
+//					email = request.email,
+//					password = passwordEncoder.encode(password),
+//					username = request.name,
+//					mobile1 = request.mobile1,
+//					mobile2 = request.mobile2,
+//					mobile3 = request.mobile3,
+//					role = UserRole.CLIENT
+//				)
+//			}
+		} else {
+			val newUser = User(
+				id = -1,
+				email = email,
+				password = passwordEncoder.encode(password),
+				username = name,
+				mobile1 = mobile1,
+				mobile2 = mobile2,
+				mobile3 = mobile3,
+				role = UserRole.CLIENT
+			)
+			DefaultValidator.validate(newUser)
+			newUser.id = userService.createUser(newUser).id
 		}
 	}
 }
