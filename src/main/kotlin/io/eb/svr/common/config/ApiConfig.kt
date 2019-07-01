@@ -8,6 +8,7 @@ object ApiConfig {
 
 	const val B2B_PATH = "b2b"
 	const val B2C_PATH = "b2c"
+	const val USER_PATH = "user"
 	const val SHOP_PATH = "shop"
 	const val ADMIN_PATH = "admin"
 
@@ -16,6 +17,7 @@ object ApiConfig {
 	const val REGISTER_PATH = "register"
 	const val CERTIFICATION_REQUEST_PATH = "cert/request"
 	const val CERTIFICATION_CONFIRM_PATH = "cert/confirm"
+	const val ACCOUNT_USE_CHECK_PATH = "check/account"
 
 	const val RECEPT_PATH = "recept"
 	const val SEARCH_PATH = "search"

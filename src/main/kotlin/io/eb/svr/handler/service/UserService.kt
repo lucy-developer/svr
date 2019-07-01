@@ -1,6 +1,7 @@
 package io.eb.svr.handler.service
 
 import io.eb.svr.exception.CustomException
+import io.eb.svr.handler.entity.request.CheckAccountRequest
 import io.eb.svr.model.entity.User
 import io.eb.svr.model.repository.UserRepository
 import mu.KLogging
@@ -19,7 +20,18 @@ class UserService {
 
 	@Throws(CustomException::class)
 	fun findByUserEmail(email: String) : User? {
-		return userRepository.findById(email)
+		return userRepository.findUsersByEmail(email)
 	}
 
+	@Throws(CustomException::class)
+	fun existsByEmail(request: CheckAccountRequest) : Boolean {
+		return userRepository.existsUsersByEmail(request.email)
+	}
+
+	@Throws(CustomException::class)
+	fun existsByAccount(request: CheckAccountRequest) : Boolean {
+		return userRepository.existsUsersByEmailAndUsernameAndMobile1AndMobile2AndMobile3(
+			request.email, request.name, request.mobile1, request.mobile2, request.mobile3
+		)
+	}
 }
