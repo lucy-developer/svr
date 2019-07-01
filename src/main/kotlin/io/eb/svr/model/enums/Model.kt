@@ -7,9 +7,9 @@ import io.eb.svr.common.util.BaseEnum
  * Create by lucy on 2019-06-10
  **/
 enum class Gender(val type: String, val desc: String) {
-	unknown("unknown", "전체"),
-	male("male", "남성"),
-	female("female", "여성");
+	unknown("U", "전체"),
+	male("M", "남성"),
+	female("F", "여성");
 
 //	override fun getCode(): String = type
 //	override fun getName(): String = desc
