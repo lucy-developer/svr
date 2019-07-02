@@ -4,8 +4,8 @@ import org.springframework.security.core.GrantedAuthority
 
 enum class UserRole : GrantedAuthority {
     ADMIN,
-    CLIENT,
-    OPERATOR,
+    USER,
+    SHOP,
     CEO,
     LOADER;
 

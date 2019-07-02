@@ -1,6 +1,11 @@
 package io.eb.svr.handler.entity.request
 
+import io.eb.svr.model.enums.BankCode
 import io.eb.svr.model.enums.Gender
+import io.eb.svr.model.enums.Position
+import io.eb.svr.model.enums.ShopRole
+import java.time.LocalDate
+import java.util.*
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.validation.constraints.NotNull
@@ -27,7 +32,17 @@ data class UserRegisterRequest (
 	@NotNull
 	val password: String,
 
-	val id: Long? = null,
+	val id: Long? = -1,
+	val sex: Gender? = null,
 
-	val sex: Gender? = null
+	val storeId: Long? = null,
+	val nickName: String? = null,
+	@Enumerated(EnumType.STRING) val position: Position? = null,
+	val joinDate: LocalDate? = null,
+
+	@Enumerated(EnumType.STRING) val salaryBankCode: BankCode? = null,
+	val salaryBankNum: String? = null,
+
+	@Enumerated(EnumType.STRING) val role: ShopRole? = null
+
 )

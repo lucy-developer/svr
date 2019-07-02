@@ -64,7 +64,10 @@ data class Store (
 	var latitude: Double? = null,
 
 	@Column(name = "longitude", unique = false, nullable = true)
-	var longitude: Double? = null
+	var longitude: Double? = null,
+
+	@Column(name = "ceo_id", unique = false, nullable = true)
+	var ceoId: Long? = null
 
 ) : Auditable(), Serializable {
 

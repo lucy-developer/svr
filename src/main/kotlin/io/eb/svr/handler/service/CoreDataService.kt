@@ -3,6 +3,8 @@ package io.eb.svr.handler.service
 import io.eb.svr.exception.CustomException
 import io.eb.svr.model.entity.Stplat
 import io.eb.svr.model.enums.AreaGroup
+import io.eb.svr.model.enums.BankCode
+import io.eb.svr.model.enums.Position
 import io.eb.svr.model.repository.StplatRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -56,5 +58,32 @@ class CoreDataService {
 			?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
 	}
 
+	@Throws(CustomException::class)
+	fun getShopPosition(servlet: HttpServletRequest): ArrayList<Map<String, String>> {
+		var positions = ArrayList<Map<String, String>>()
+
+		Position.values().toList().forEach { data : Position ->
+			var position = HashMap<String, String>()
+			position.put("value", data.type)
+			position.put("label", data.desc)
+			positions.add(position)
+		}
+		if (positions.isEmpty()) throw CustomException("Positions data not found", HttpStatus.NOT_FOUND)
+		return positions
+	}
+
+	@Throws(CustomException::class)
+	fun getBanks(servlet: HttpServletRequest): ArrayList<Map<String, String>> {
+		var banks = ArrayList<Map<String, String>>()
+
+		BankCode.values().toList().forEach { data : BankCode ->
+			var bank = HashMap<String, String>()
+			bank.put("value", data.type)
+			bank.put("label", data.desc)
+			banks.add(bank)
+		}
+		if (banks.isEmpty()) throw CustomException("Positions data not found", HttpStatus.NOT_FOUND)
+		return banks
+	}
 
 }

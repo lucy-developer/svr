@@ -1,7 +1,9 @@
 package io.eb.svr.handler.service
 
 import io.eb.svr.exception.CustomException
+import io.eb.svr.model.entity.B2BUserShop
 import io.eb.svr.model.entity.Store
+import io.eb.svr.model.repository.B2BUserShopRepository
 import io.eb.svr.model.repository.StoreRepository
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +19,10 @@ class ShopService {
 	@Autowired
 	private lateinit var storeRepository: StoreRepository
 
+	@Autowired
+	private lateinit var b2BUserShopRepository: B2BUserShopRepository
+
+
 	@Throws(CustomException::class)
 	fun searchShopById(storeId: Long) : Store {
 		return storeRepository.getOne(storeId)
@@ -24,5 +30,10 @@ class ShopService {
 
 	fun createShop(store: Store) : Long {
 		return storeRepository.save(store).id!!
+	}
+
+	@Throws(CustomException::class)
+	fun createB2BUserInShop(b2BUserShop: B2BUserShop): B2BUserShop {
+		return b2BUserShopRepository.save(b2BUserShop)
 	}
 }

@@ -2,7 +2,9 @@ package io.eb.svr.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.eb.svr.model.enums.BankCode
 import io.eb.svr.model.enums.Position
+import io.eb.svr.model.enums.ShopRole
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.JoinColumnOrFormula
 import org.hibernate.annotations.JoinFormula
@@ -16,10 +18,10 @@ import javax.persistence.*
 @DynamicUpdate
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class B2BUserStore (
+data class B2BUserShop (
 
 	@EmbeddedId
-	var b2BUserStorePK: B2BUserStorePK?,
+	var b2BUserShopPK: B2BUserShopPK?,
 
 	@Column(name = "delete_yn", unique = false, nullable = true)
 	var deleteYn: String? = "N",
@@ -40,19 +42,21 @@ data class B2BUserStore (
 	@Column(name = "nick_name", unique = false, nullable = false)
 	var nickName: String,
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "salary_bank", unique = false, nullable = true)
-	var salaryBank: String? = null,
+	var salaryBank: BankCode? = null,
 
 	@Column(name = "salary_bank_number", unique = false, nullable = true)
-	var salaryBankNumber: String? = null
+	var salaryBankNumber: String? = null,
 
-//	@Column(name = "role")
-//	var role: String? = null
+	@Enumerated(EnumType.STRING)
+	@Column(name = "shop_role", unique = false, nullable = false)
+	var shopRole: ShopRole = ShopRole.ETC
 
 ): Auditable(), Serializable {
 
 	@Embeddable
-	data class B2BUserStorePK (
+	data class B2BUserShopPK (
 		@Column(name="user_id", nullable=false, insertable = false, updatable = false)
 		var userId: Long,
 

@@ -3,9 +3,12 @@ package io.eb.svr.handler.controller
 import io.eb.svr.common.config.ApiConfig
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AREA_PATH
+import io.eb.svr.common.config.ApiConfig.BANK_PATH
 import io.eb.svr.common.config.ApiConfig.CITIES_PATH
 import io.eb.svr.common.config.ApiConfig.CITY_PATH
 import io.eb.svr.common.config.ApiConfig.CORE_PATH
+import io.eb.svr.common.config.ApiConfig.POSITION_PATH
+import io.eb.svr.common.config.ApiConfig.SHOP_PATH
 import io.eb.svr.common.config.ApiConfig.STPLAT_PATH
 import io.eb.svr.common.config.ApiConfig.TYPE_PATH
 import io.eb.svr.handler.service.CoreDataService
@@ -52,4 +55,18 @@ class CoreDataController {
 		servlet: HttpServletRequest,
 		@PathVariable("type") type: String
 	) = ResponseEntity.status(OK).body(coreDataService.getStplatByType(servlet, type))
+
+	@GetMapping(
+		path = ["/$SHOP_PATH/$POSITION_PATH"],
+		produces = [APPLICATION_JSON_VALUE])
+	fun getPosition(
+		servlet: HttpServletRequest
+	) = ResponseEntity.status(OK).body(coreDataService.getShopPosition(servlet))
+
+	@GetMapping(
+		path = ["/$BANK_PATH"],
+		produces = [APPLICATION_JSON_VALUE])
+	fun getBank(
+		servlet: HttpServletRequest
+	) = ResponseEntity.status(OK).body(coreDataService.getBanks(servlet))
 }

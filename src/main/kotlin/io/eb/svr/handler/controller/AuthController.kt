@@ -128,14 +128,14 @@ class AuthController {
 	) = ResponseEntity.status(CREATED).body(authService.b2cUserRegister(request))
 
 	// B2B 가입 신청
-//	@PostMapping(
-//		path = ["/$B2B_PATH/$REGISTER_PATH"],
-//		consumes = [APPLICATION_JSON_VALUE],
-//		produces = [APPLICATION_JSON_VALUE]
-//	)
-//	fun b2bUserRegister(
-//		servlet: HttpServletRequest,
-//		@RequestBody request: ShopReceptSearchRequest
-//	) = ResponseEntity.status(CREATED).body(authService.shopReceptSearch(servlet,request))
+	@PostMapping(
+		path = ["/$USER_PATH/$B2B_PATH/$REGISTER_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun b2bUserRegister(
+		servlet: HttpServletRequest,
+		@RequestBody request: UserRegisterRequest
+	) = ResponseEntity.status(CREATED).body(authService.b2bUserRegister(request))
 
 }
