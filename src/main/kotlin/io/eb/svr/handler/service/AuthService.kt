@@ -1,5 +1,6 @@
 package io.eb.svr.handler.service
 
+import io.eb.svr.common.util.DateUtil
 import io.eb.svr.common.util.SmsUtil
 import io.eb.svr.exception.AlreadyExistsException
 import mu.KLogging
@@ -56,35 +57,57 @@ class AuthService {
 	@Autowired
 	private lateinit var userService: UserService
 
-
-
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
 		try {
-			val token = UsernamePasswordAuthenticationToken(request.username, request.password)
+			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
 			authenticationManager.authenticate(token)
 
-			val role = userRepository.findById(request.username)?.role
+			val role = userService.findByUserEmail(request.email)?.role
 				?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
 
 			val password = BCryptPasswordEncoder().encode(request.password)
 
-			logger.info("b2bUserLogin id:" + request.username + " password:"+request.password)
-
 			val userinfo = HashMap<String, Any>()
-//			val b2bUser = userRepository.findB2BUsersByIdAndPassword(request.username, password)
-			val b2bUser = userRepository.findById(request.username)
+			val b2bUser = userService.findByUserEmail(request.email)
 
 			if (b2bUser == null) {
 				throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
 			}
 
-			logger.info { "b2bLogin response" }
-			userinfo.put("id", b2bUser.email)
-			userinfo.put("seq", b2bUser.id)
-//				userinfo.put("role", role)
-			userinfo.put("username", b2bUser.username)
-			return LoginResponse(tokenProvider.createToken(request.username, role), userinfo)
+			if (b2bUser.role == UserRole.USER) {
+				return throw CustomException("Invalid User Role", HttpStatus.UNAUTHORIZED)
+			}
+			val userShop = shopService.searchB2BUserShopByUserId(b2bUser.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate))
+				?: return throw CustomException("Invalid User Shop Info", HttpStatus.UNAUTHORIZED)
+
+			userinfo.put("user", userShop)
+			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
+		} catch (exception: AuthenticationException) {
+			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun b2cLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
+		try {
+			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
+			authenticationManager.authenticate(token)
+
+			val role = userService.findByUserEmail(request.email)?.role
+				?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
+
+			val password = BCryptPasswordEncoder().encode(request.password)
+
+			val userinfo = HashMap<String, Any>()
+			val b2bUser = userService.findByUserEmail(request.email)
+
+			if (b2bUser == null) {
+				throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
+			}
+
+			userinfo.put("user", b2bUser)
+			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
 		}

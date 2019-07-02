@@ -1,6 +1,6 @@
 package io.eb.svr.handler.entity.request
 
 data class LoginRequest(
-    val username: String,
+    val email: String,
     val password: String
 )

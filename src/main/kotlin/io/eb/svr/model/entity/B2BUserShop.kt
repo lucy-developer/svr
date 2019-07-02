@@ -2,6 +2,7 @@ package io.eb.svr.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.eb.svr.common.util.DateUtil
 import io.eb.svr.model.enums.BankCode
 import io.eb.svr.model.enums.Position
 import io.eb.svr.model.enums.ShopRole
@@ -37,7 +38,7 @@ data class B2BUserShop (
 	var joinDate: LocalDate? = null,
 
 	@Column(name = "leave_date", unique = false, nullable = true)
-	var leaveDate: LocalDate? = null,
+	var leaveDate: LocalDate? = DateUtil.stringToLocalDate("9999-12-31"),
 
 	@Column(name = "nick_name", unique = false, nullable = false)
 	var nickName: String,

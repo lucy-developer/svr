@@ -19,7 +19,7 @@ class CustomUserDetails : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         logger.info{ "loadUserByUsername username: " + username }
 
-        val profile = userRepository.findById(username)
+        val profile = userRepository.findUsersByEmail(username)
             ?: throw UsernameNotFoundException("User '$username' not found")
 
         return org.springframework.security.core.userdetails.User

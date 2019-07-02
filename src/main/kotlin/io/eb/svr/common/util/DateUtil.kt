@@ -1,6 +1,7 @@
 package io.eb.svr.common.util
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -45,5 +46,9 @@ object DateUtil {
 
 	fun stringToLocalDateTime(dateString: String="") : LocalDateTime {
 		return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+	}
+
+	fun stringToLocalDate(dateString: String="") : LocalDate {
+		return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 	}
 }
