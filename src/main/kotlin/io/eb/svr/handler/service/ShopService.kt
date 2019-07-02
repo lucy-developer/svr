@@ -8,6 +8,7 @@ import io.eb.svr.model.repository.StoreRepository
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 /**
  * Create by lucy on 2019-06-10
@@ -24,16 +25,27 @@ class ShopService {
 
 
 	@Throws(CustomException::class)
-	fun searchShopById(storeId: Long) : Store {
+	fun searchShopById(storeId: Long): Store {
 		return storeRepository.getOne(storeId)
 	}
 
-	fun createShop(store: Store) : Long {
+	fun createShop(store: Store): Long {
 		return storeRepository.save(store).id!!
 	}
 
 	@Throws(CustomException::class)
 	fun createB2BUserInShop(b2BUserShop: B2BUserShop): B2BUserShop {
 		return b2BUserShopRepository.save(b2BUserShop)
+	}
+
+	@Throws(CustomException::class)
+	fun searchB2BUserShopByUserId(
+		userId: Long,
+		startDate: LocalDate,
+		endDate: LocalDate
+	): B2BUserShop? {
+		return b2BUserShopRepository.findB2BUserShopsByB2BUserShopPKUserIdAndJoinDateLessThanEqualAndLeaveDateGreaterThanEqual(
+			userId, startDate, endDate
+		)
 	}
 }

@@ -46,6 +46,16 @@ class AuthController {
 	) = ResponseEntity.status(OK).body(authService.b2bLogin(servlet, request))
 
 	@PostMapping(
+		path = ["/$B2C_PATH/$LOGIN_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun b2cLogin(
+		servlet: HttpServletRequest,
+		@RequestBody request: LoginRequest
+	) = ResponseEntity.status(OK).body(authService.b2cLogin(servlet, request))
+
+	@PostMapping(
 		path = ["/$B2B_PATH/$REGISTER_PATH"],
 		consumes = [APPLICATION_JSON_VALUE],
 		produces = [APPLICATION_JSON_VALUE]
