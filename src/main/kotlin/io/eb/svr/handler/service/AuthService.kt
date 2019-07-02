@@ -13,10 +13,9 @@ import io.eb.svr.exception.CustomException
 import io.eb.svr.handler.entity.request.*
 import io.eb.svr.handler.entity.response.LoginResponse
 import io.eb.svr.handler.entity.response.ShopReceptResponse
-import io.eb.svr.model.entity.ReceptStore
-import io.eb.svr.model.entity.Store
-import io.eb.svr.model.entity.User
-import io.eb.svr.model.entity.UserRole
+import io.eb.svr.model.entity.*
+import io.eb.svr.model.enums.Position
+import io.eb.svr.model.enums.ShopRole
 import io.eb.svr.model.repository.UserRepository
 import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.DefaultValidator
@@ -188,22 +187,6 @@ class AuthService {
 
 		if (user != null) {
 			throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
-//			if ( (user!!.id != request.id) ||
-//				 (user!!.email != request.email) ){
-//				throw CustomException("Userid is not allowed", HttpStatus.CONFLICT)
-//			}
-//			else {
-//				val newUser = User(
-//					id = request.id,
-//					email = request.email,
-//					password = passwordEncoder.encode(password),
-//					username = request.name,
-//					mobile1 = request.mobile1,
-//					mobile2 = request.mobile2,
-//					mobile3 = request.mobile3,
-//					role = UserRole.CLIENT
-//				)
-//			}
 		} else {
 			val newUser = User(
 				id = -1,
@@ -213,10 +196,54 @@ class AuthService {
 				mobile1 = mobile1,
 				mobile2 = mobile2,
 				mobile3 = mobile3,
-				role = UserRole.CLIENT
+				role = UserRole.USER
 			)
 			DefaultValidator.validate(newUser)
 			newUser.id = userService.createUser(newUser).id
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun b2bUserRegister(request: UserRegisterRequest) = with(request) {
+		val user = userService.findByUserEmail(request.email)
+
+		if (user != null) {
+			logger.debug { "b2bUserRegister user.id ["+user.id+"] request.id["+id +"]"}
+			if ((user.id != id) || (user.mobile2 != mobile2) || (user.mobile3 != mobile3))
+				return throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
+		}
+
+		val newUser = User(
+			id = id!!,
+			email = email,
+			password = passwordEncoder.encode(password),
+			username = name,
+			mobile1 = mobile1,
+			mobile2 = mobile2,
+			mobile3 = mobile3,
+			role = UserRole.SHOP
+		)
+		DefaultValidator.validate(newUser)
+		newUser.id = userService.createUser(newUser).id
+
+		val newUserShopPk = B2BUserShop.B2BUserShopPK(userId = newUser.id, storeId = storeId!!)
+		val newUserShop = B2BUserShop(
+			b2BUserShopPK = newUserShopPk,
+			position = position!!,
+			joinDate = joinDate!!,
+			nickName = nickName!!,
+			salaryBank = salaryBankCode!!,
+			salaryBankNumber = salaryBankNum!!,
+			shopRole = role!!
+		)
+
+		shopService.createB2BUserInShop(newUserShop)
+		if (position == Position.CEO) {
+			shopService.searchShopById(storeId).let { newStore ->
+				shopService.createShop(newStore.apply {
+					ceoId = newUser.id
+				})
+			}
 		}
 	}
 }

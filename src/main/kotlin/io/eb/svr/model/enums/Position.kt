@@ -15,3 +15,11 @@ enum class Position (val type: String, val desc: String) {
     STAFF("STAFF", "스텝"),
     ETC("ETC", "기타")
 }
+
+enum class ShopRole (val type: String, val desc: String) {
+    ADMIN("ADMIN", "관리자"),
+    MANAGER("MANAGER", "매니저"),
+	EXPERT("EXPERT", "전문가"),
+    STAFF("STAFF", "직원"),
+    ETC("ETC", "기타")
+}

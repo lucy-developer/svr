@@ -29,6 +29,8 @@ object ApiConfig {
 	const val CITIES_PATH = "cities"
 	const val STPLAT_PATH = "stplat"
 	const val TYPE_PATH = "type"
+	const val POSITION_PATH = "position"
+	const val BANK_PATH = "bank"
 
 
 
