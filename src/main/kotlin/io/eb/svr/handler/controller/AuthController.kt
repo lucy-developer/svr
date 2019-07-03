@@ -1,6 +1,7 @@
 package io.eb.svr.handler.controller
 
 import io.eb.svr.common.config.ApiConfig.ACCOUNT_USE_CHECK_PATH
+import io.eb.svr.common.config.ApiConfig.ADMIN_PATH
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.CREATED
@@ -56,14 +57,14 @@ class AuthController {
 	) = ResponseEntity.status(OK).body(authService.b2cLogin(servlet, request))
 
 	@PostMapping(
-		path = ["/$B2B_PATH/$REGISTER_PATH"],
+		path = ["/$USER_PATH/$ADMIN_PATH/$REGISTER_PATH"],
 		consumes = [APPLICATION_JSON_VALUE],
 		produces = [APPLICATION_JSON_VALUE]
 	)
-	fun b2bRegister(
+	fun adminRegister(
 		servlet: HttpServletRequest,
-		@RequestBody request: LoginRequest
-	) = ResponseEntity.status(OK).body(authService.b2bLogin(servlet, request))
+		@RequestBody request: UserRegisterRequest
+	) = ResponseEntity.status(OK).body(authService.adminUserRegister(request))
 
 	@PostMapping(
 		path = ["/$SHOP_PATH/$RECEPT_PATH"],

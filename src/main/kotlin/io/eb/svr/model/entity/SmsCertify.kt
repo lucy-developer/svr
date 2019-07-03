@@ -30,23 +30,15 @@ data class SmsCertify (
 
 
 ) : Auditable(), Serializable {
-//	constructor(
-//		pk: SmsCertifyPk,
-//		count: Long,
-//		certNumber: String
-//	) : this() {
-//		this.pk = pk
-//		this.count = count
-//		this.certNumber = certNumber
-//	}
+
+	@Embeddable
+	data class SmsCertifyPk (
+		@Column(name = "date")
+		var date: String,
+
+		@Column(name = "mobile")
+		var mobile: String
+	) : Serializable {
+
+	}
 }
-
-@Data
-@Embeddable
-data class SmsCertifyPk (
-	@Column(name = "date")
-	var date: String,
-
-	@Column(name = "mobile")
-	var mobile: String
-) : Serializable
