@@ -23,6 +23,7 @@ import io.eb.svr.security.DefaultValidator
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.LocalDate
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
@@ -38,9 +39,6 @@ class AuthService {
 
 	@Autowired
 	private lateinit var passwordEncoder: PasswordEncoder
-
-	@Autowired
-	private lateinit var userRepository: UserRepository
 
 	@Autowired
 	private lateinit var tokenProvider: JwtTokenProvider
@@ -82,6 +80,16 @@ class AuthService {
 				?: return throw CustomException("Invalid User Shop Info", HttpStatus.UNAUTHORIZED)
 
 			userinfo.put("user", userShop)
+
+			if (userShop.shopRole == ShopRole.ADMIN) {
+				//설정 정보 입력 여부 확인
+				val items = shopService.searchShopSettingItemByShopId(userShop.b2BUserShopPK.storeId)
+				var required = "Y"
+				for(item in items) {
+					if ((item.required == "Y") && (item.settingYn == "N")) required = "N"
+				}
+				userinfo.put("shop_setting", required)
+			}
 			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
@@ -196,9 +204,14 @@ class AuthService {
 	}
 
 	@Throws(AlreadyExistsException::class)
-	fun checkAccountIsAlreadyUsed(request: CheckAccountRequest) : User? {
+	fun checkAccountIsAlreadyUsed(request: CheckAccountRequest) : HashMap<String, Any> {
+		val userinfo = HashMap<String, Any>()
+
 		if (userService.existsByEmail(request)) {
-			return userService.findByUserEmail(request.email)
+			val user = userService.findByUserEmail(request.email)
+//			userinfo.put("user", user!!)
+			userinfo.put("user_store", shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate))!!)
+			return userinfo
 		} else {
 			throw CustomException("user not found", HttpStatus.NOT_FOUND)
 		}
@@ -236,6 +249,10 @@ class AuthService {
 				return throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
 		}
 
+		shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate)).let { b2bUserShop ->
+			return throw CustomException("User already have a shop", HttpStatus.CONFLICT)
+		}
+
 		val newUser = User(
 			id = id!!,
 			email = email,
@@ -267,6 +284,28 @@ class AuthService {
 					ceoId = newUser.id
 				})
 			}
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun adminUserRegister(request: UserRegisterRequest) = with(request) {
+		val user = userService.findByUserEmail(request.email)
+
+		if (user != null) {
+			throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
+		} else {
+			val newUser = User(
+				id = -1,
+				email = email,
+				password = passwordEncoder.encode(password),
+				username = name,
+				mobile1 = mobile1,
+				mobile2 = mobile2,
+				mobile3 = mobile3,
+				role = UserRole.ADMIN
+			)
+			DefaultValidator.validate(newUser)
+			newUser.id = userService.createUser(newUser).id
 		}
 	}
 }

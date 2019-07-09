@@ -5,10 +5,8 @@ import io.eb.svr.exception.CustomException
 import io.eb.svr.handler.entity.request.ConfirmReceptShopRequest
 import io.eb.svr.handler.entity.request.ReceptShopSearchRequest
 import io.eb.svr.handler.entity.request.ShopReceptSearchRequest
-import io.eb.svr.model.entity.ReceptStore
-import io.eb.svr.model.entity.Store
-import io.eb.svr.model.entity.User
-import io.eb.svr.model.entity.UserRole
+import io.eb.svr.model.entity.*
+import io.eb.svr.model.enums.ShopSetting
 import io.eb.svr.security.jwt.JwtTokenProvider
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -78,6 +76,17 @@ class AdminService {
 			)
 
 		shopService.createShop(newStore)
+
+		ShopSetting.values().toList().forEach { data : ShopSetting ->
+			var settimgItem = ShopSettingItem(
+				shopSettingItemPK = ShopSettingItem.ShopSettingItemPK(newStore.id!!, data.type),
+				description = data.desc,
+				required = data.required,
+				icon = data.icon,
+				settingYn = "N"
+			)
+			shopService.createShopSettingItem(settimgItem)
+		}
 
 		recept.confirmYn = "Y"
 		recept.confirmDate = DateUtil.stringToLocalDateTime(DateUtil.nowDateTime)

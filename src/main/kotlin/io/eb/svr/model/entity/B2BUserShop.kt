@@ -22,7 +22,7 @@ import javax.persistence.*
 data class B2BUserShop (
 
 	@EmbeddedId
-	var b2BUserShopPK: B2BUserShopPK?,
+	var b2BUserShopPK: B2BUserShopPK,
 
 	@Column(name = "delete_yn", unique = false, nullable = true)
 	var deleteYn: String? = "N",

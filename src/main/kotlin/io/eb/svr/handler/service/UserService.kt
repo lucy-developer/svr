@@ -40,5 +40,9 @@ class UserService {
 		return userRepository.save(request)
 	}
 
+	@Throws(CustomException::class)
+	fun findB2BUserShopRelation() {
+	}
+
 
 }
