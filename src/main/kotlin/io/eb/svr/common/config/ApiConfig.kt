@@ -32,6 +32,9 @@ object ApiConfig {
 	const val POSITION_PATH = "position"
 	const val BANK_PATH = "bank"
 
+	const val UPLOAD_PATH = "upload"
+	const val IMAGE_PATH = "image"
+
 
 
 

@@ -3,6 +3,7 @@ package io.eb.svr.model.entity
 import io.eb.svr.model.enums.ServiceType
 import org.hibernate.annotations.DynamicInsert
 import java.io.Serializable
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -17,16 +18,16 @@ data class Store (
 	//@Column(name = "id", unique = true, nullable = false)
 	var id: Long? = null,
 
-	@Column(name = "name")
+	@Column(name = "name", unique = false, nullable = false)
 	var name: String? = null,
 
 	@Column(name = "business_number")
 	var businessNumber: String? = null,
 
-	@Column(name = "zip_code")
+	@Column(name = "zip_code", unique = false, nullable = true)
 	var zipCode: String? = null,
 
-	@Column(name = "address")
+	@Column(name = "address", unique = false, nullable = true)
 	var address: String? = null,
 
 	@Column(name = "address_detail")
@@ -41,23 +42,29 @@ data class Store (
 	@Column(name = "phone3")
 	var phone3: String? = null,
 
-	@Column(name = "title")
+	@Column(name = "title", unique = false, nullable = true)
 	var title: String? = null,
 
-	@Column(name = "information")
+	@Column(name = "introduction", unique = false, nullable = true)
+	var introduction: String? = null,
+
+	@Column(name = "information", unique = false, nullable = true)
 	var information: String? = null,
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "service_type")
+	@Column(name = "service_type", unique = false, nullable = false)
 	var serviceType: ServiceType? = null,
 
-	@Column(name = "online_yn")
+	@Column(name = "online_yn", unique = false, nullable = true)
 	var onlineYn: String? = null,
 
-	@Column(name = "city")
+	@Column(name = "online_date", unique = false, nullable = true)
+	var onlineDate: LocalDateTime? = null,
+
+	@Column(name = "city", unique = false, nullable = true)
 	var city: String? = null,
 
-	@Column(name = "district")
+	@Column(name = "district", unique = false, nullable = true)
 	var district: String? = null,
 
 	@Column(name = "latitude", unique = false, nullable = true)
@@ -67,7 +74,22 @@ data class Store (
 	var longitude: Double? = null,
 
 	@Column(name = "ceo_id", unique = false, nullable = true)
-	var ceoId: Long? = null
+	var ceoId: Long? = null,
+
+	@Column(name = "homepage", unique = false, nullable = true)
+	var homepage: String? = null,
+
+	@Column(name = "blog", unique = false, nullable = true)
+	var blog: String? = null,
+
+	@Column(name = "instagram", unique = false, nullable = true)
+	var instagram: String? = null,
+
+	@Column(name = "facebook", unique = false, nullable = true)
+	var facebook: String? = null,
+
+	@Column(name = "youtube", unique = false, nullable = true)
+	var youtube: String? = null
 
 ) : Auditable(), Serializable {
 

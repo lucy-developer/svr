@@ -1,5 +1,6 @@
 package io.eb.svr.handler.entity.request
 
+import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 
 /**
@@ -23,5 +24,18 @@ data class ShopRequest(
 	val phone3: String? = null,
 
 	val city: String? = null,
-	val district: String? = null
+	val district: String? = null,
+
+	val title: String? = null,
+	val introduction: String? = null,
+	val information: String? = null,
+
+	val online_yn: String? = null,
+	val online_date: LocalDateTime? = null,
+
+	val homepage: String? = null,
+	val blog: String? = null,
+	val instagram: String? = null,
+	val facebook: String? = null,
+	val youtube: String? = null
 )
