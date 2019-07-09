@@ -243,14 +243,17 @@ class AuthService {
 	fun b2bUserRegister(request: UserRegisterRequest) = with(request) {
 		val user = userService.findByUserEmail(request.email)
 
+		logger.debug {  "b2bUserRegister" }
+
 		if (user != null) {
 			logger.debug { "b2bUserRegister user.id ["+user.id+"] request.id["+id +"]"}
+
+//			shopService.searchB2BUserShopByUserId(user.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate)).let { b2bUserShop ->
+//				return throw CustomException("User already have a shop", HttpStatus.CONFLICT)
+//			}
+
 			if ((user.id != id) || (user.mobile2 != mobile2) || (user.mobile3 != mobile3))
 				return throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
-		}
-
-		shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate)).let { b2bUserShop ->
-			return throw CustomException("User already have a shop", HttpStatus.CONFLICT)
 		}
 
 		val newUser = User(
@@ -267,6 +270,8 @@ class AuthService {
 		newUser.id = userService.createUser(newUser).id
 
 		val newUserShopPk = B2BUserShop.B2BUserShopPK(userId = newUser.id, storeId = storeId!!)
+		logger.debug {  "b2bUserRegister createUserShop userId = "+ newUserShopPk.userId+" storeId = "+ newUserShopPk.storeId}
+		logger.debug {  "b2bUserRegister createUserShop position = "+ position+" joinDate = "+ joinDate+" nickName = "+nickName+ " shopRole = "+ role}
 		val newUserShop = B2BUserShop(
 			b2BUserShopPK = newUserShopPk,
 			position = position!!,
@@ -276,6 +281,8 @@ class AuthService {
 			salaryBankNumber = salaryBankNum!!,
 			shopRole = role!!
 		)
+
+		logger.debug {  "b2bUserRegister createB2BUserInShop " }
 
 		shopService.createB2BUserInShop(newUserShop)
 		if (position == Position.CEO) {
