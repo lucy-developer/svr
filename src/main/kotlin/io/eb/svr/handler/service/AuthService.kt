@@ -23,6 +23,7 @@ import io.eb.svr.security.DefaultValidator
 import io.eb.svr.security.jwt.JwtTokenProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.LocalDate
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
@@ -38,9 +39,6 @@ class AuthService {
 
 	@Autowired
 	private lateinit var passwordEncoder: PasswordEncoder
-
-	@Autowired
-	private lateinit var userRepository: UserRepository
 
 	@Autowired
 	private lateinit var tokenProvider: JwtTokenProvider
@@ -206,9 +204,14 @@ class AuthService {
 	}
 
 	@Throws(AlreadyExistsException::class)
-	fun checkAccountIsAlreadyUsed(request: CheckAccountRequest) : User? {
+	fun checkAccountIsAlreadyUsed(request: CheckAccountRequest) : HashMap<String, Any> {
+		val userinfo = HashMap<String, Any>()
+
 		if (userService.existsByEmail(request)) {
-			return userService.findByUserEmail(request.email)
+			val user = userService.findByUserEmail(request.email)
+//			userinfo.put("user", user!!)
+			userinfo.put("user_store", shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate))!!)
+			return userinfo
 		} else {
 			throw CustomException("user not found", HttpStatus.NOT_FOUND)
 		}
@@ -244,6 +247,10 @@ class AuthService {
 			logger.debug { "b2bUserRegister user.id ["+user.id+"] request.id["+id +"]"}
 			if ((user.id != id) || (user.mobile2 != mobile2) || (user.mobile3 != mobile3))
 				return throw CustomException("UserEmail is already in use", HttpStatus.CONFLICT)
+		}
+
+		shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate)).let { b2bUserShop ->
+			return throw CustomException("User already have a shop", HttpStatus.CONFLICT)
 		}
 
 		val newUser = User(
