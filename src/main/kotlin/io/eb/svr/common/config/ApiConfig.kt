@@ -34,6 +34,8 @@ object ApiConfig {
 
 	const val UPLOAD_PATH = "upload"
 	const val IMAGE_PATH = "image"
+	const val SETTING_PATH = "setting"
+	const val TIME_PATH = "time"
 
 
 

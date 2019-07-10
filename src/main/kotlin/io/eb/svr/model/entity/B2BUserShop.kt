@@ -28,8 +28,8 @@ data class B2BUserShop (
 	var deleteYn: String? = "N",
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "position", unique = false, nullable = false)
-	var position: Position,
+	@Column(name = "position", unique = false, nullable = true)
+	var position: Position? = null,
 
 	@Column(name = "confirm_yn")
 	var confirmYn: String? = "N",
@@ -40,8 +40,8 @@ data class B2BUserShop (
 	@Column(name = "leave_date", unique = false, nullable = true)
 	var leaveDate: LocalDate? = DateUtil.stringToLocalDate("9999-12-31"),
 
-	@Column(name = "nick_name", unique = false, nullable = false)
-	var nickName: String,
+	@Column(name = "nick_name", unique = false, nullable = true)
+	var nickName: String? = null,
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "salary_bank", unique = false, nullable = true)
@@ -52,7 +52,7 @@ data class B2BUserShop (
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "shop_role", unique = false, nullable = false)
-	var shopRole: ShopRole = ShopRole.ETC
+	var shopRole: ShopRole = ShopRole.STAFF
 
 ): Auditable(), Serializable {
 

@@ -1,11 +1,14 @@
 package io.eb.svr.model.repository
 
-import io.eb.svr.model.entity.B2BUserShop
-import io.eb.svr.model.entity.ShopSettingItem
-import io.eb.svr.model.entity.Store
+import io.eb.svr.model.entity.*
+import io.eb.svr.model.enums.Days
+import io.eb.svr.model.enums.TimeType
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 @Repository
@@ -25,4 +28,18 @@ interface B2BUserShopRepository : JpaRepository<B2BUserShop, B2BUserShop.B2BUser
 @Repository
 interface ShopSettingItemRepository: JpaRepository<ShopSettingItem, ShopSettingItem.ShopSettingItemPK> {
 	fun findShopSettingItemsByShopSettingItemPKStoreId(storeId: Long): List<ShopSettingItem>
+}
+
+@Repository
+interface ShopOperationTimeRepository: JpaRepository<ShopOperationTime, ShopOperationTimePK> {
+	@Query("SELECT v from ShopOperationTime v where v.pk.shopId = :shopId and v.pk.typeCode = :typeCode and v.pk.dayCode = :dayCode and v.pk.startDate <= :startDate and v.pk.endDate >= :endDate")
+	fun findShopOperationTimesByShopOpeationTimePK(shopId: Long, typeCode: TimeType, dayCode: Days, startDate: LocalDateTime, endDate: LocalDateTime) : ShopOperationTime?
+
+	@Modifying
+	@Query("UPDATE ShopOperationTime v set v.pk.endDate = :endDate where v.pk.shopId = :shopId and v.pk.typeCode = :typeCode and v.pk.dayCode = :dayCode and v.pk.startDate = :startDate")
+	fun updateShopOperationTimesEndDate(shopId: Long, typeCode: TimeType, dayCode: Days, startDate: LocalDateTime, endDate: LocalDateTime)
+
+//	@Query("SELECT v from ShopOperationTime v where v.pk.shopId = :shopId")
+//	fun findShopOperationTimesByShopOpeationTimePK(shopId: Long): ShopOperationTime?
+
 }

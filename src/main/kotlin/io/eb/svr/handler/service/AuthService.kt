@@ -272,17 +272,14 @@ class AuthService {
 		val newUserShopPk = B2BUserShop.B2BUserShopPK(userId = newUser.id, storeId = storeId!!)
 		logger.debug {  "b2bUserRegister createUserShop userId = "+ newUserShopPk.userId+" storeId = "+ newUserShopPk.storeId}
 		logger.debug {  "b2bUserRegister createUserShop position = "+ position+" joinDate = "+ joinDate+" nickName = "+nickName+ " shopRole = "+ role}
-		val newUserShop = B2BUserShop(
-			b2BUserShopPK = newUserShopPk,
-			position = position!!,
-			joinDate = joinDate!!,
-			nickName = nickName!!,
-			salaryBank = salaryBankCode!!,
-			salaryBankNumber = salaryBankNum!!,
-			shopRole = role!!
-		)
+		val newUserShop = B2BUserShop(b2BUserShopPK = newUserShopPk)
 
-		logger.debug {  "b2bUserRegister createB2BUserInShop " }
+		joinDate.let { newUserShop.joinDate = joinDate }
+		position.let { newUserShop.position = position }
+		nickName.let { newUserShop.nickName = nickName }
+		salaryBankCode.let { newUserShop.salaryBank = salaryBankCode }
+		salaryBankNum.let { newUserShop.salaryBankNumber = salaryBankNum }
+		role.let { newUserShop.shopRole = role!! }
 
 		shopService.createB2BUserInShop(newUserShop)
 		if (position == Position.CEO) {

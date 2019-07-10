@@ -17,9 +17,10 @@ enum class Position (val type: String, val desc: String) {
 }
 
 enum class ShopRole (val type: String, val desc: String) {
-    ADMIN("ADMIN", "관리자"),
-    MANAGER("MANAGER", "매니저"),
-	EXPERT("EXPERT", "전문가"),
-    STAFF("STAFF", "직원"),
-    ETC("ETC", "기타")
+    ADMIN("ADMIN", "CEO(관리자)"),
+//    MANAGER("MANAGER", "매니저"),
+	EXPERT("EXPERT", "일반"),
+    STAFF("STAFF", "스텝")
+//    ,
+//    ETC("ETC", "기타")
 }
