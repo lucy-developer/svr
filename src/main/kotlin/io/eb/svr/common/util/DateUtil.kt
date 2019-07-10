@@ -51,4 +51,12 @@ object DateUtil {
 	fun stringToLocalDate(dateString: String="") : LocalDate {
 		return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 	}
+
+	fun getAddDays(date: LocalDate, amount: Long): LocalDate {
+		return date.plusDays(amount)
+	}
+
+	fun getAddDays(date: LocalDateTime, amount: Long): LocalDateTime {
+		return date.plusDays(amount)
+	}
 }

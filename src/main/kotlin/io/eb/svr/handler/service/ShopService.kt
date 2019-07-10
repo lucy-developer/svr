@@ -1,14 +1,16 @@
 package io.eb.svr.handler.service
 
 import io.eb.svr.common.util.DataUtil
+import io.eb.svr.common.util.DateUtil
 import io.eb.svr.common.util.JSONUtil
 import io.eb.svr.common.util.S3Client
 import io.eb.svr.exception.CustomException
+import io.eb.svr.handler.entity.request.ShopOperationTimeRequest
 import io.eb.svr.handler.entity.request.ShopRequest
-import io.eb.svr.model.entity.B2BUserShop
-import io.eb.svr.model.entity.ShopSettingItem
-import io.eb.svr.model.entity.Store
+import io.eb.svr.model.entity.*
+import io.eb.svr.model.enums.Days
 import io.eb.svr.model.repository.B2BUserShopRepository
+import io.eb.svr.model.repository.ShopOperationTimeRepository
 import io.eb.svr.model.repository.ShopSettingItemRepository
 import io.eb.svr.model.repository.StoreRepository
 import mu.KLogging
@@ -36,6 +38,9 @@ class ShopService {
 
 	@Autowired
 	private lateinit var shopSettingItemRepository: ShopSettingItemRepository
+
+	@Autowired
+	private lateinit var shopOperationTimeRepository: ShopOperationTimeRepository
 
 	@Autowired
 	private lateinit var s3Client: S3Client
@@ -181,6 +186,64 @@ class ShopService {
 
 	}
 
+	@Transactional
+	@Throws(CustomException::class)
+	fun shopOperationTimeSetting(request: ShopOperationTimeRequest)= with(request) {
+		if (option.equals("B")) {
+			if (daysLists != null) {
+				return throw CustomException("shop time not allowed", HttpStatus.FORBIDDEN)
+			}
 
+			Days.values().toList().forEach { data: Days ->
+				val prelist = shopOperationTimeRepository.findShopOperationTimesByShopOpeationTimePK(
+					shopId, timeType, data, DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1), DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1))
+				if ( prelist != null) {
+					logger.debug { "prelist " + prelist }
+					prelist.pk.endDate = DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 23:59:59")
+					shopOperationTimeRepository.updateShopOperationTimesEndDate(prelist.pk.shopId, prelist.pk.typeCode, prelist.pk.dayCode, prelist.pk.startDate, prelist.pk.endDate)
+				}
 
+				logger.debug { "nextDay :"+DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1) }
+
+				val shopOperationTimePK = ShopOperationTimePK(
+					shopId = shopId,
+					startDate = DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1),
+					endDate = DateUtil.stringToLocalDateTime("9999-12-31 23:59:59"),
+					typeCode = timeType,
+					dayCode = data
+				)
+				val shopOperationTime = ShopOperationTime(
+					pk = shopOperationTimePK, startTime = startTime!!, endTime = endTime!!
+				)
+				shopOperationTimeRepository.save(shopOperationTime)
+			}
+		} else if (option.equals("I")) {
+			if (daysLists != null) {
+				for (item in daysLists) {
+					//기존 등록된 정보 확인 후 이력 만료
+					shopOperationTimeRepository.findShopOperationTimesByShopOpeationTimePK(
+						shopId, timeType, item.days!!, DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1), DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1)).let { prelist ->
+//						shopId).let { prelist ->
+						prelist!!.pk!!.endDate = DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 23:59:59")
+					}
+
+					val shopOperationTimePK = ShopOperationTimePK(
+						shopId = shopId,
+						startDate = DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1),
+						endDate = DateUtil.stringToLocalDateTime("9999-12-31 23:59:59"),
+						typeCode = timeType,
+						dayCode = item.days!!
+					)
+					val shopOperationTime = ShopOperationTime(
+						pk = shopOperationTimePK, startTime = item.startTime!!, endTime = item.endTime!!
+					)
+					shopOperationTimeRepository.save(shopOperationTime)
+				}
+			} else {
+				return throw CustomException("shop time not allowed", HttpStatus.FORBIDDEN)
+			}
+		} else {
+			throw CustomException("option_code not allowed", HttpStatus.FORBIDDEN)
+		}
+	}
 }
