@@ -42,6 +42,15 @@ class ShopController {
 		@RequestParam("file") file: MultipartFile
 	) = ResponseEntity.status(OK).body(shopService.fileUpload(file))
 
+	@GetMapping(
+		path = ["/$SETTING_PATH/{shopId}"],
+		produces = [MediaType.APPLICATION_JSON_VALUE]
+	)
+	fun getShopSetting(
+		servlet: HttpServletRequest,
+		@PathVariable("shopId") shopId: Long
+	) = ResponseEntity.status(OK).body(shopService.getShopSetting(servlet, shopId))
+
 	@PutMapping(
 		path = ["/$SETTING_PATH"],
 		consumes = arrayOf(MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -63,6 +72,5 @@ class ShopController {
 		servlet: HttpServletRequest,
 		@RequestBody request: ShopOperationTimeRequest
 	) = ResponseEntity.status(CREATED).body(shopService.shopOperationTimeSetting(request))
-
 
 }

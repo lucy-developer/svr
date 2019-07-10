@@ -185,6 +185,8 @@ class AuthService {
 			throw CustomException("shopId not found", HttpStatus.NOT_FOUND)
 		}
 
+		val code = "B"+ shop.serviceType.toString().slice(IntRange(0,1))+String.format("%05d", shop.id)
+
 		val newShop = Store(
 			id = shop.id,
 			name = request.shopName,
@@ -197,7 +199,8 @@ class AuthService {
 			phone2 = request.phone2,
 			phone3 = request.phone3,
 			city = request.city,
-			district = request.district
+			district = request.district,
+			code = code
 		)
 
 		shopService.createShop(newShop)
@@ -311,5 +314,11 @@ class AuthService {
 			DefaultValidator.validate(newUser)
 			newUser.id = userService.createUser(newUser).id
 		}
+	}
+
+	@Throws(CustomException::class)
+	fun getShopByCode(servlet: HttpServletRequest, code: String) : Store? {
+		return shopService.findStoresByCode(code)
+			?: throw CustomException("Shop code not found", HttpStatus.NOT_FOUND)
 	}
 }

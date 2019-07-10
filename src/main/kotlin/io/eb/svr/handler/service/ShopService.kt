@@ -5,10 +5,12 @@ import io.eb.svr.common.util.DateUtil
 import io.eb.svr.common.util.JSONUtil
 import io.eb.svr.common.util.S3Client
 import io.eb.svr.exception.CustomException
+import io.eb.svr.handler.entity.request.OperationTime
 import io.eb.svr.handler.entity.request.ShopOperationTimeRequest
 import io.eb.svr.handler.entity.request.ShopRequest
 import io.eb.svr.model.entity.*
 import io.eb.svr.model.enums.Days
+import io.eb.svr.model.enums.TimeType
 import io.eb.svr.model.repository.B2BUserShopRepository
 import io.eb.svr.model.repository.ShopOperationTimeRepository
 import io.eb.svr.model.repository.ShopSettingItemRepository
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
 /**
@@ -48,6 +51,15 @@ class ShopService {
 	@Throws(CustomException::class)
 	fun searchShopById(storeId: Long): Store {
 		return storeRepository.getOne(storeId)
+	}
+
+	fun findShopOperationTimeByShopId(shopId: Long) : List<ShopOperationTime> {
+		return shopOperationTimeRepository.findShopOperationTimesByShopOperationTimePKShopId(shopId)
+	}
+
+	@Throws(CustomException::class)
+	fun findStoresByCode(code: String) : Store? {
+		return storeRepository.findStoresByCode(code)
 	}
 
 	fun createShop(store: Store): Long {
@@ -78,6 +90,16 @@ class ShopService {
 	@Throws(CustomException::class)
 	fun fileUpload(file: MultipartFile) {
 		s3Client.upload(file)
+	}
+
+	@Throws(CustomException::class)
+	fun getShopSetting(servlet: HttpServletRequest, shopId: Long) : HashMap<String, Any> {
+		val shop = HashMap<String, Any>()
+
+		shop.put("shop_info", searchShopById(shopId))
+		shop.put("shop_operation", findShopOperationTimeByShopId(shopId)!!)
+
+		return shop
 	}
 
 	@Throws(CustomException::class)
@@ -189,6 +211,15 @@ class ShopService {
 	@Transactional
 	@Throws(CustomException::class)
 	fun shopOperationTimeSetting(request: ShopOperationTimeRequest)= with(request) {
+		setOperationTime(work, shopId, TimeType.WORK)
+		setOperationTime(operation, shopId, TimeType.OPERATION)
+		shopSettingItemRepository.findShopSettingItemsByShopSettingItemPKStoreIdAndShopSettingItemPKItemCode(shopId, "STORE_OPERATION").let { shopItem ->
+			shopItem!!.settingYn = "Y"
+		}
+	}
+
+	@Throws(CustomException::class)
+	private fun setOperationTime(request: OperationTime, shopId: Long, timeType: TimeType) = with(request) {
 		if (option.equals("B")) {
 			if (daysLists != null) {
 				return throw CustomException("shop time not allowed", HttpStatus.FORBIDDEN)
@@ -223,8 +254,8 @@ class ShopService {
 					//기존 등록된 정보 확인 후 이력 만료
 					shopOperationTimeRepository.findShopOperationTimesByShopOpeationTimePK(
 						shopId, timeType, item.days!!, DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1), DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1)).let { prelist ->
-//						shopId).let { prelist ->
-						prelist!!.pk!!.endDate = DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 23:59:59")
+						//						shopId).let { prelist ->
+						prelist!!.pk.endDate = DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 23:59:59")
 					}
 
 					val shopOperationTimePK = ShopOperationTimePK(
@@ -232,7 +263,7 @@ class ShopService {
 						startDate = DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1),
 						endDate = DateUtil.stringToLocalDateTime("9999-12-31 23:59:59"),
 						typeCode = timeType,
-						dayCode = item.days!!
+						dayCode = item.days
 					)
 					val shopOperationTime = ShopOperationTime(
 						pk = shopOperationTimePK, startTime = item.startTime!!, endTime = item.endTime!!

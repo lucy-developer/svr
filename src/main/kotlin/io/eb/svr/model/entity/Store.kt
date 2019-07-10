@@ -18,6 +18,9 @@ data class Store (
 	//@Column(name = "id", unique = true, nullable = false)
 	var id: Long? = null,
 
+	@Column(name = "code", unique = true, nullable = false)
+	var code: String? = null,
+
 	@Column(name = "name", unique = false, nullable = false)
 	var name: String? = null,
 

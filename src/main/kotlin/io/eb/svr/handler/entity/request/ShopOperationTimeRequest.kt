@@ -14,9 +14,13 @@ data class ShopOperationTimeRequest(
 	val shopId: Long,
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	val timeType: TimeType,
+	val work: OperationTime,
 
+	@NotNull
+	val operation: OperationTime
+)
+
+data class OperationTime (
 	@NotNull
 	val option: String,
 

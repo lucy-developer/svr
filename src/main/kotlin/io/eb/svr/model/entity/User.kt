@@ -25,7 +25,7 @@ data class User (
 	var id: Long,
 
 	@Size(min = 6, max = 255, message = "Invalid email length: interval is [4, 255]")
-	@Column(name = "email", unique = true, nullable = false)
+	@Column(name = "email", unique = true, nullable = false, updatable = false, insertable = true)
 	var email: String,
 
 	@get:JsonIgnore
