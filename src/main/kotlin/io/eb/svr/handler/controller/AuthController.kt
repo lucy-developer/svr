@@ -13,6 +13,7 @@ import io.eb.svr.common.config.ApiConfig.B2B_PATH
 import io.eb.svr.common.config.ApiConfig.B2C_PATH
 import io.eb.svr.common.config.ApiConfig.CERTIFICATION_CONFIRM_PATH
 import io.eb.svr.common.config.ApiConfig.CERTIFICATION_REQUEST_PATH
+import io.eb.svr.common.config.ApiConfig.CODE_PATH
 import io.eb.svr.common.config.ApiConfig.LOGIN_PATH
 import io.eb.svr.common.config.ApiConfig.RECEPT_PATH
 import io.eb.svr.common.config.ApiConfig.REGISTER_PATH
@@ -148,5 +149,13 @@ class AuthController {
 		servlet: HttpServletRequest,
 		@RequestBody request: UserRegisterRequest
 	) = ResponseEntity.status(CREATED).body(authService.b2bUserRegister(request))
+
+	@GetMapping(
+		path = ["/$SHOP_PATH/$CODE_PATH/{code}"],
+		produces = [APPLICATION_JSON_VALUE])
+	fun getShopByCode(
+		servlet: HttpServletRequest,
+		@PathVariable("code") code: String
+	) = ResponseEntity.status(OK).body(authService.getShopByCode(servlet, code))
 
 }

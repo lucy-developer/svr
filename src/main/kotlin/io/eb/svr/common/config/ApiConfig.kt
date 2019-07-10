@@ -36,6 +36,7 @@ object ApiConfig {
 	const val IMAGE_PATH = "image"
 	const val SETTING_PATH = "setting"
 	const val TIME_PATH = "time"
+	const val CODE_PATH = "code"
 
 
 
