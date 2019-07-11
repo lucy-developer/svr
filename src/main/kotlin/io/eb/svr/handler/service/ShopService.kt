@@ -295,8 +295,9 @@ class ShopService {
 		}
 
 		request.status.let {
-			if (request.status == EmployeeStatus.WORK)
-			userShop!!.confirmYn = "Y"
+			if (request.status == EmployeeStatus.ING) {
+				userShop!!.confirmYn = "Y"
+			}
 		}
 		request.position.let { userShop!!.position = request.position }
 		request.joinDate.let { userShop!!.joinDate = request.joinDate }
