@@ -212,11 +212,11 @@ class AuthService {
 
 		if (userService.existsByEmail(request)) {
 			val user = userService.findByUserEmail(request.email)
-//			userinfo.put("user", user!!)
+			userinfo.put("user", user!!)
+
 			if (user!!.role == UserRole.SHOP || user!!.role == UserRole.CEO)
 				userinfo.put("user_store", shopService.searchB2BUserShopByUserId(user!!.id, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate))!!)
-			else
-				userinfo.put("user_store", user)
+
 			return userinfo
 		} else {
 			throw CustomException("user not found", HttpStatus.NOT_FOUND)
