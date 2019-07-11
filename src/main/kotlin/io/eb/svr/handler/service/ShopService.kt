@@ -5,11 +5,13 @@ import io.eb.svr.common.util.DateUtil
 import io.eb.svr.common.util.JSONUtil
 import io.eb.svr.common.util.S3Client
 import io.eb.svr.exception.CustomException
+import io.eb.svr.handler.entity.request.EmployeeRequest
 import io.eb.svr.handler.entity.request.OperationTime
 import io.eb.svr.handler.entity.request.ShopOperationTimeRequest
 import io.eb.svr.handler.entity.request.ShopRequest
 import io.eb.svr.model.entity.*
 import io.eb.svr.model.enums.Days
+import io.eb.svr.model.enums.EmployeeStatus
 import io.eb.svr.model.enums.TimeType
 import io.eb.svr.model.repository.B2BUserShopRepository
 import io.eb.svr.model.repository.ShopOperationTimeRepository
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
@@ -276,5 +279,29 @@ class ShopService {
 		} else {
 			throw CustomException("option_code not allowed", HttpStatus.FORBIDDEN)
 		}
+	}
+
+	@Throws(CustomException::class)
+	fun getShopEmployees(servlet: HttpServletRequest, shopId: Long) : List<B2BUserShop> {
+		return b2BUserShopRepository.findB2BUserShopsByB2BUserShopPKStoreId(shopId)
+	}
+
+	@Throws(CustomException::class)
+	fun putEmployee(servlet: HttpServletRequest, request: EmployeeRequest) {
+		val userShop = try {
+			b2BUserShopRepository.findB2BUserShopsByB2BUserShopPK(B2BUserShop.B2BUserShopPK(request.userId, request.shopId))
+		} catch (exception: EntityNotFoundException) {
+			throw CustomException("Shop User not found", HttpStatus.NOT_FOUND)
+		}
+
+		request.status.let {
+			if (request.status == EmployeeStatus.WORK)
+			userShop!!.confirmYn = "Y"
+		}
+		request.position.let { userShop!!.position = request.position }
+		request.joinDate.let { userShop!!.joinDate = request.joinDate }
+		request.role.let { userShop!!.shopRole = request.role!! }
+
+		createB2BUserInShop(userShop!!)
 	}
 }

@@ -24,6 +24,8 @@ interface B2BUserShopRepository : JpaRepository<B2BUserShop, B2BUserShop.B2BUser
 
 	fun findB2BUserShopsByB2BUserShopPKUserIdAndJoinDateLessThanEqualAndLeaveDateGreaterThanEqual(
 		userId: Long, startDate: LocalDate, endDate: LocalDate) : B2BUserShop?
+
+	fun findB2BUserShopsByB2BUserShopPKStoreId(storeId: Long) : List<B2BUserShop>
 }
 
 @Repository
