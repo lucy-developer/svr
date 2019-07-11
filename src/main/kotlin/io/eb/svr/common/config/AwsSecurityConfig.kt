@@ -12,8 +12,8 @@ import software.amazon.awssdk.regions.Region.AP_NORTHEAST_2
 @ConfigurationProperties(prefix = "aws")
 @Component
 class AwsSecurityConfig {
-	var accessKeyId = ""
-	var secretAccessKey = ""
+	var accessKeyId = "AKIA3GZICWVJ2IQ5TQ64"
+	var secretAccessKey = "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"
 	var region = AP_NORTHEAST_2
 	var bucket = "fs.everyonebeauty.com"
 	var cdnUrl = ""

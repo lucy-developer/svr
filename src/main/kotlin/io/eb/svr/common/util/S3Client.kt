@@ -46,7 +46,10 @@ class S3Client(
 			if (fileName.endsWith(".gif")) {
 				cType = "image/gif"
 			}
-			s32.putObject(PutObjectRequest.builder().bucket(awsSecretKey.bucket).key(fileName).contentType(cType)
+			s32.putObject(PutObjectRequest.builder()
+				.bucket(awsSecretKey.bucket)
+				.key(fileName)
+				.contentType(cType)
 				.build(), RequestBody.fromBytes(upFile.bytes))
 		} catch (e: Exception) {
 			logger.info("upload error: {}", e)

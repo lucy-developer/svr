@@ -37,6 +37,7 @@ object ApiConfig {
 	const val SETTING_PATH = "setting"
 	const val TIME_PATH = "time"
 	const val CODE_PATH = "code"
+	const val EMPLOYEES_PATH = "employees"
 
 
 
