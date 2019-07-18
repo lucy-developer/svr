@@ -17,13 +17,14 @@ import io.eb.svr.handler.entity.response.ShopReceptResponse
 import io.eb.svr.model.entity.*
 import io.eb.svr.model.enums.Position
 import io.eb.svr.model.enums.ShopRole
-import io.eb.svr.model.repository.UserRepository
-import io.eb.svr.model.repository.ReceptStoreRepository
 import io.eb.svr.security.DefaultValidator
 import io.eb.svr.security.jwt.JwtTokenProvider
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDate
+import java.util.stream.Collectors
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
@@ -58,8 +59,16 @@ class AuthService {
 	@Throws(CustomException::class)
 	fun b2bLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
 		try {
-			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
-			authenticationManager.authenticate(token)
+//			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
+//			authenticationManager.authenticate(token)
+			val authentication = authenticationManager.authenticate(
+				UsernamePasswordAuthenticationToken(
+					request.email,
+					request.password
+				)
+			)
+
+			SecurityContextHolder.getContext().authentication = authentication
 
 			val role = userService.findByUserEmail(request.email)?.role
 				?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
@@ -90,7 +99,8 @@ class AuthService {
 				}
 				userinfo.put("shop_setting", required)
 			}
-			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
+			return LoginResponse(tokenProvider.createToken(authentication), userinfo)
+//			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
 		}
@@ -99,8 +109,14 @@ class AuthService {
 	@Throws(CustomException::class)
 	fun b2cLogin(servlet: HttpServletRequest, request: LoginRequest): LoginResponse = with(request) {
 		try {
-			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
-			authenticationManager.authenticate(token)
+//			val token = UsernamePasswordAuthenticationToken(request.email, request.password)
+//			authenticationManager.authenticate(token)
+			val authentication = authenticationManager.authenticate(
+				UsernamePasswordAuthenticationToken(
+					request.email,
+					request.password
+				)
+			)
 
 			val role = userService.findByUserEmail(request.email)?.role
 				?: throw CustomException("User not found", HttpStatus.NOT_FOUND)
@@ -115,7 +131,8 @@ class AuthService {
 			}
 
 			userinfo.put("user", b2bUser)
-			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
+//			return LoginResponse(tokenProvider.createToken(request.email, role), userinfo)
+			return LoginResponse(tokenProvider.createToken(authentication), userinfo)
 		} catch (exception: AuthenticationException) {
 			throw CustomException("Invalid username or password", HttpStatus.UNPROCESSABLE_ENTITY)
 		}

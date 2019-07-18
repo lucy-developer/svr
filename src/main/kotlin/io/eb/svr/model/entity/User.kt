@@ -58,31 +58,28 @@ data class User (
 	@Column(name = "birthday", unique = false, nullable = true)
 	var birthday: Date? = null,
 
-//	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Size(max = 10)
 	@Column(name = "role", unique = false, nullable = false)
 	var role: UserRole
 
 ) : Auditable(), Serializable {
 
-//
-//)
-//	constructor() {
-//
-//	}
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
 
-//	constructor(id: String,
-//				name: String,
-//				password: String,
-//				sex: String,
-//	            role: String
-//	) : this() {
-//		this.id = id
-//		this.name = name
-//		this.password = password
-//		this.sex = sex
-//		this.role = role
-//
-//	}
+		other as User
+
+		if (email != other.email) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = email.hashCode()
+		result = 31 * result + email.hashCode()
+		return result
+	}
 
 }

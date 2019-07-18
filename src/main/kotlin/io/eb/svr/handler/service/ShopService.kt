@@ -300,7 +300,7 @@ class ShopService {
 			}
 		}
 		request.position.let { userShop!!.position = request.position }
-		request.joinDate.let { userShop!!.joinDate = request.joinDate }
+		request.date.let { userShop!!.joinDate = request.date }
 		request.role.let { userShop!!.shopRole = request.role!! }
 
 		createB2BUserInShop(userShop!!)

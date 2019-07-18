@@ -9,7 +9,7 @@ import java.util.*
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
 	//@Nullable
-	fun findById(id: String) : User? // Optional<User>
+	fun findUsersById(id: Long) : User? // Optional<User>
 	fun findUsersByEmail(email: String) : User?
 
 	fun existsUsersByEmailAndUsernameAndMobile1AndMobile2AndMobile3(email: String, name: String, mobile1: String, mobile2: String, mobile3: String) : Boolean

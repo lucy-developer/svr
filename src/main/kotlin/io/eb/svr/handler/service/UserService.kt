@@ -24,6 +24,11 @@ class UserService {
 	}
 
 	@Throws(CustomException::class)
+	fun findByUserId(id: Long) : User? {
+		return userRepository.findUsersById(id)
+	}
+
+	@Throws(CustomException::class)
 	fun existsByEmail(request: CheckAccountRequest) : Boolean {
 		return userRepository.existsUsersByEmail(request.email)
 	}

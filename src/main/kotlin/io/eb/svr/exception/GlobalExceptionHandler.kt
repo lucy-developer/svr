@@ -1,9 +1,11 @@
 package io.eb.svr.exception
 
+import javassist.NotFoundException
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.boot.web.servlet.error.ErrorAttributes
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -46,5 +48,11 @@ class GlobalExceptionHandler {
     @Throws(IOException::class)
     fun handleException(response: HttpServletResponse, exception: Exception) {
         response.sendError(BAD_REQUEST.value(), "Something went wrong")
+    }
+
+    @ExceptionHandler(ResourceNotFoundException::class)
+    @Throws(IOException::class)
+    fun handleResourceNotFoundException(response: HttpServletResponse, exception: ResourceNotFoundException) {
+        response.sendError(NOT_FOUND.value(), exception.message)
     }
 }

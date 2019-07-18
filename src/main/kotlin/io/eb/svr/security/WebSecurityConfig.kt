@@ -11,12 +11,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import io.eb.svr.security.jwt.JwtConfigurerAdapter
+//import io.eb.svr.security.jwt.JwtConfigurerAdapter
 import io.eb.svr.security.jwt.JwtTokenProvider
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.AUTH_PATH
 import io.eb.svr.common.config.ApiConfig.CORE_PATH
+import io.eb.svr.common.config.ApiConfig.SHOP_PATH
 import io.eb.svr.common.config.SecurityConfig.PASSWORD_STRENGTH
+import io.eb.svr.security.jwt.JwtAuthenticationFilter
+import org.springframework.security.config.BeanIds
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 //@EnableWebSecurity(debug = true)
@@ -24,6 +28,9 @@ import io.eb.svr.common.config.SecurityConfig.PASSWORD_STRENGTH
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var tokenProvider: JwtTokenProvider
+
+	@Autowired
+	private lateinit var userDetails: CustomUserDetails
 
 //    @Throws(Exception::class)
 //    override fun configure(http: HttpSecurity) {
@@ -48,6 +55,12 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 //        http.apply(JwtConfigurerAdapter(tokenProvider))
 //    }
 
+	@Bean
+	fun jwtAuthenticationFilter(): JwtAuthenticationFilter = JwtAuthenticationFilter(tokenProvider, userDetails)
+
+	@Bean(BeanIds.AUTHENTICATION_MANAGER)
+	override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
+
 	@Throws(Exception::class)
 	override fun configure(http: HttpSecurity): Unit = with(http) {
 		csrf().disable()
@@ -57,16 +70,18 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 		authorizeRequests()
 			.antMatchers("/$API_VERSION/$AUTH_PATH/**").permitAll()
 			.antMatchers("/$API_VERSION/$CORE_PATH/**").permitAll()
+//			.antMatchers("/$API_VERSION/$SHOP_PATH/**").permitAll()
 			.anyRequest().authenticated()
 
-		apply(JwtConfigurerAdapter(tokenProvider))
+//		apply(JwtConfigurerAdapter(tokenProvider))
+		addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
 	}
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(PASSWORD_STRENGTH)
 
-    @Bean
-    fun authManager(): AuthenticationManager = authenticationManagerBean()
+//    @Bean
+//    fun authManager(): AuthenticationManager = authenticationManagerBean()
 
 //    @Bean
 //    open fun unauthorizedEntryPoint(): AuthenticationEntryPoint {
