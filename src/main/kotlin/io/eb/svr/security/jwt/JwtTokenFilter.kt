@@ -11,30 +11,30 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 //@Component
-class JwtTokenFilter(
-    private val tokenProvider: JwtTokenProvider
-) : OncePerRequestFilter() {
-    companion object : KLogging()
-
-    @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        chain: FilterChain
-    ) {
-        try {
-            val token = tokenProvider.resolveTokenOrNull(request)
-            if (token != null) {
-                tokenProvider.validateTokenOrThrow(token)
-                SecurityContextHolder.getContext().authentication = tokenProvider.getAuthenticationOrThrow(token)
-            }
-        } catch (exception: CustomException) {
-            SecurityContextHolder.clearContext()
-            response.sendError(exception.status.value(), exception.message)
-            return
-        }
-
-        chain.doFilter(request, response)
-    }
-
-}
+//class JwtTokenFilter(
+//    private val tokenProvider: JwtTokenProvider
+//) : OncePerRequestFilter() {
+//    companion object : KLogging()
+//
+//    @Throws(ServletException::class, IOException::class)
+//    override fun doFilterInternal(
+//        request: HttpServletRequest,
+//        response: HttpServletResponse,
+//        chain: FilterChain
+//    ) {
+//        try {
+//            val token = tokenProvider.resolveTokenOrNull(request)
+//            if (token != null) {
+//                tokenProvider.validateTokenOrThrow(token)
+//                SecurityContextHolder.getContext().authentication = tokenProvider.getAuthenticationOrThrow(token)
+//            }
+//        } catch (exception: CustomException) {
+//            SecurityContextHolder.clearContext()
+//            response.sendError(exception.status.value(), exception.message)
+//            return
+//        }
+//
+//        chain.doFilter(request, response)
+//    }
+//
+//}

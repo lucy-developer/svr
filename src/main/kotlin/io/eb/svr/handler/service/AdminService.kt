@@ -37,9 +37,9 @@ class AdminService {
 	@Throws(CustomException::class)
 	fun getSelf(servlet: HttpServletRequest): User {
 		val token = tokenProvider.resolveTokenOrThrow(servlet)
-		val username = tokenProvider.getUsernameOrThrow(token)
+		val username = tokenProvider.userIdFromJwt(token)
 
-		return userService.findByUserEmail(username)
+		return userService.findByUserId(username)
 			?: throw CustomException("Invalid token", HttpStatus.UNAUTHORIZED)
 	}
 

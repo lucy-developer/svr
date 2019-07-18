@@ -4,6 +4,7 @@ import io.eb.svr.common.config.ApiConfig.ALL_PATH
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.EMPLOYEES_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
+import io.eb.svr.handler.entity.request.EmployeeRequest
 import io.eb.svr.handler.service.EmployeeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -30,4 +31,13 @@ class EmployeeController {
 		servlet: HttpServletRequest,
 		@PathVariable("shopId") shopId: Long
 	) = ResponseEntity.status(OK).body(employeeService.getShopEmployees(servlet, shopId))
+
+	@PutMapping(
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE]
+	)
+	fun putEmployeeByShop(
+		servlet: HttpServletRequest,
+		@RequestBody request: EmployeeRequest
+	) = ResponseEntity.status(OK).body(employeeService.putEmployeeByShop(servlet, request))
 }

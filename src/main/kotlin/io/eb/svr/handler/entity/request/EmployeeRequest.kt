@@ -23,7 +23,6 @@ data class EmployeeRequest (
 	@Enumerated(EnumType.STRING) val position: Position? = null,
 	@Enumerated(EnumType.STRING) val role: ShopRole? = null,
 
-	val joinDate: LocalDate? = null,
-
+	val date: LocalDate? = null,
 	@Enumerated(EnumType.STRING) val status: EmployeeStatus? = null
 )
