@@ -24,5 +24,7 @@ data class EmployeeRequest (
 	@Enumerated(EnumType.STRING) val role: ShopRole? = null,
 
 	val date: LocalDate? = null,
-	@Enumerated(EnumType.STRING) val status: EmployeeStatus? = null
+	@Enumerated(EnumType.STRING) val status: EmployeeStatus? = null,
+
+	val daysWorkLists: List<DaysList>? = null
 )
