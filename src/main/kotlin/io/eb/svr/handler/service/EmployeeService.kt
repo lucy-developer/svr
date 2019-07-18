@@ -6,9 +6,12 @@ import io.eb.svr.exception.CustomException
 import io.eb.svr.handler.entity.request.EmployeeRequest
 import io.eb.svr.model.entity.B2BUserShop
 import io.eb.svr.model.entity.EmployeeHistory
+import io.eb.svr.model.entity.EmployeeWorkTime
+import io.eb.svr.model.enums.Days
 import io.eb.svr.model.enums.EmployeeStatus
 import io.eb.svr.model.repository.B2BUserShopRepository
 import io.eb.svr.model.repository.EmployeeHistoryRepository
+import io.eb.svr.model.repository.EmployeeWorkTimeRepository
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -35,8 +38,9 @@ class EmployeeService {
 	@Autowired
 	private lateinit var employeeHistoryRepository: EmployeeHistoryRepository
 
-//	@PersistenceContext
-//	private lateinit var entityManager: EntityManager = JPAManager.getEntityManager()
+	@Autowired
+	private lateinit var employeeWorkTimeRepository: EmployeeWorkTimeRepository
+
 	@Inject
 	protected lateinit var entityManager: EntityManager
 
@@ -66,6 +70,23 @@ class EmployeeService {
 		transaction.commit()
 		return employeeHistory
 	}
+
+	@Throws(CustomException::class)
+	fun createEmployeeWorkTime(employeeWorkTime: EmployeeWorkTime) : EmployeeWorkTime {
+		return employeeWorkTimeRepository.save(employeeWorkTime)
+	}
+
+	//	@Transactional(propagation = Propagation.REQUIRED)
+	@Throws(CustomException::class)
+	fun updateEmployeeWorkTime(employeeWorkTime: EmployeeWorkTime) : EmployeeWorkTime {
+		val session = HibernateUtil.getSession(entityManager)
+		val transaction = session.beginTransaction()
+		employeeWorkTimeRepository.save(employeeWorkTime)
+		transaction.commit()
+		return employeeWorkTime
+	}
+
+
 
 	@Throws(CustomException::class)
 	fun putEmployeeByShop(servlet: HttpServletRequest, request: EmployeeRequest) {
@@ -105,6 +126,33 @@ class EmployeeService {
 				status = if (request.status!!.equals(EmployeeStatus.REING)) EmployeeStatus.ING else request.status
 			)
 			createEmployeeHistory(employeeHistory)
+		}
+
+		request.daysWorkLists?.let {
+			for (daylist in request.daysWorkLists) {
+				employeeWorkTimeRepository.findEmployeeWorkTimesByUserIdAndShopIdAndDayAndEndDate(
+					userShop!!.b2BUserShopPK.userId,
+					userShop.b2BUserShopPK.storeId,
+					daylist.days!!,
+					DateUtil.stringToLocalDateTime("9999-12-31 23:59:59")
+				)?.let { preEmployeeWorkTime ->
+					updateEmployeeWorkTime(preEmployeeWorkTime.apply {
+						preEmployeeWorkTime.endDate = DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 23:59:59")
+					})
+				}
+
+				val newEmployeeWorkTime = EmployeeWorkTime(
+					seq = -1,
+					userId = userShop.b2BUserShopPK.userId,
+					shopId = userShop.b2BUserShopPK.storeId,
+					startDate = DateUtil.getAddDays(DateUtil.stringToLocalDateTime(DateUtil.nowDate+" 00:00:00"), 1),
+					endDate = DateUtil.stringToLocalDateTime("9999-12-31 23:59:59"),
+					day = daylist.days,
+					startTime = daylist.startTime,
+					endTime = daylist.endTime
+				)
+				createEmployeeWorkTime(newEmployeeWorkTime)
+			}
 		}
 
 		request.role?.let { userShop!!.shopRole = request.role!! }

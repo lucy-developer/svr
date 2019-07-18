@@ -3,14 +3,12 @@ package io.eb.svr.model.entity
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.eb.svr.common.util.DateUtil
-import io.eb.svr.model.enums.BankCode
-import io.eb.svr.model.enums.EmployeeStatus
-import io.eb.svr.model.enums.Position
-import io.eb.svr.model.enums.ShopRole
+import io.eb.svr.model.enums.*
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.Where
 import java.io.Serializable
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.persistence.*
 
 /**
@@ -81,4 +79,69 @@ data class EmployeeHistory (
 				this.startDate.hashCode() * 17
 	}
 
+}
+
+@Entity
+@Table(schema = "customer",
+	name = "employee_work_time",
+	uniqueConstraints = [
+		UniqueConstraint(columnNames = ["user_id", "shop_id", "end_date", "start_date", "day"])])
+@DynamicUpdate
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class EmployeeWorkTime (
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "seq", updatable = false)
+	var seq: Long,
+
+	@Column(name="user_id", nullable=false, insertable = true, updatable = false)
+	var userId: Long,
+
+	@Column(name="shop_id", nullable=false, insertable = true, updatable = false)
+	var shopId: Long,
+
+	@Column(name = "start_date", nullable = true, insertable = true, updatable = false)
+	var startDate: LocalDateTime,
+
+	@Column(name = "end_date", nullable=false)
+	var endDate: LocalDateTime = DateUtil.stringToLocalDateTime("9999-12-31 23:59:59"),
+
+	@Column(name = "delete_yn", unique = false, nullable = true)
+	var deleteYn: String? = "N",
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "day", unique = false, nullable = true)
+	var day: Days,
+
+	@Column(name = "start_time", unique = false, nullable = true)
+	var startTime: String? = null,
+
+	@Column(name = "end_time", unique = false, nullable = true)
+	var endTime: String? = null
+
+	): Auditable(), Serializable {
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as EmployeeWorkTime
+
+		if ( (userId != other.userId) &&
+			(shopId != other.shopId) &&
+			(day != other.day) &&
+			(startDate != other.startDate) &&
+			(endDate != other.endDate)	) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return this.userId.hashCode() * 41 +
+				this.shopId.hashCode() * 41 +
+				this.endDate.hashCode() * 17 +
+				this.startDate.hashCode() * 17 +
+				this.day.hashCode() * 41
+	}
 }
