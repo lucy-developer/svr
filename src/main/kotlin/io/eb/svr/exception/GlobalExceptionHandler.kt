@@ -35,7 +35,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException::class)
     @Throws(IOException::class)
     fun handleAlreadyExistsException(response: HttpServletResponse, exception: AlreadyExistsException) {
-        response.sendError(exception.status.value(), exception.data.toString())
+        response.sendError(exception.status.value(), exception.message)
     }
 
     @ExceptionHandler(AccessDeniedException::class)

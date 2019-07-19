@@ -60,6 +60,11 @@ class ShopService {
 		return shopOperationTimeRepository.findShopOperationTimesByShopOperationTimePKShopId(shopId)
 	}
 
+	fun checkIfStoreIdIsExist(shopId: Long) : Boolean {
+		storeRepository.findStoresById(shopId)?.let { return true }
+		return false
+	}
+
 	@Throws(CustomException::class)
 	fun findStoresByCode(code: String) : Store? {
 		return storeRepository.findStoresByCode(code)

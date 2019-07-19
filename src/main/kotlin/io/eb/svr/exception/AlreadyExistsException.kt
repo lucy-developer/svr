@@ -7,6 +7,5 @@ import org.springframework.http.HttpStatus
  **/
 class AlreadyExistsException(
 	override val message: String,
-	val status: HttpStatus,
-	val data: Any
+	val status: HttpStatus
 ) : Exception()

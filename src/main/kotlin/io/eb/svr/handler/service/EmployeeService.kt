@@ -155,7 +155,7 @@ class EmployeeService {
 			}
 		}
 
-		request.role?.let { userShop!!.shopRole = request.role!! }
+		request.role?.let { userShop!!.shopRole = request.role }
 		request.nickName?.let { userShop!!.nickName = request.nickName }
 		request.position?.let { userShop!!.position = request.position }
 		createB2BUserInShop(userShop!!)
