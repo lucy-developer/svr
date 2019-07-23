@@ -92,7 +92,16 @@ data class Store (
 	var facebook: String? = null,
 
 	@Column(name = "youtube", unique = false, nullable = true)
-	var youtube: String? = null
+	var youtube: String? = null,
+
+	@Column(name = "concurrent_appointment", unique = false, nullable = true)
+	var concurrentAppointment: Long? = null,
+
+	@Column(name = "start_appointment_duplicate", unique = false, nullable = true)
+	var startAppointmentDuplicate: String? = null,
+
+	@Column(name = "end_appointment_duplicate", unique = false, nullable = true)
+	var endAppointmentDuplicate: String? = null
 
 ) : Auditable(), Serializable {
 

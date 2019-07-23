@@ -11,6 +11,7 @@ interface UserRepository : JpaRepository<User, Long> {
 	//@Nullable
 	fun findUsersById(id: Long) : User? // Optional<User>
 	fun findUsersByEmail(email: String) : User?
+	fun findUsersByMobile3(mobile3: String): List<User>
 
 	fun existsUsersByEmailAndUsernameAndMobile1AndMobile2AndMobile3(email: String, name: String, mobile1: String, mobile2: String, mobile3: String) : Boolean
 	fun existsUsersByEmail(email: String) : Boolean

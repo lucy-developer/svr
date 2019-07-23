@@ -11,6 +11,8 @@ object ApiConfig {
 	const val USER_PATH = "user"
 	const val SHOP_PATH = "shop"
 	const val ADMIN_PATH = "admin"
+	const val EMPLOYEES_PATH = "employees"
+	const val PRODUCT_PATH = "product"
 
 	const val AUTH_PATH = "auth"
 	const val LOGIN_PATH = "login"
@@ -37,8 +39,13 @@ object ApiConfig {
 	const val SETTING_PATH = "setting"
 	const val TIME_PATH = "time"
 	const val CODE_PATH = "code"
-	const val EMPLOYEES_PATH = "employees"
 	const val ALL_PATH = "all"
+	const val SERVICE_PATH = "service"
+	const val EXPERT_PATH = "expert"
+	const val MOBILE_PATH = "mobile"
+	const val APPOINTMENT_PATH = "appointment"
+	const val RENDER_PATH = "render"
+	const val CHECK_PATH = "check"
 
 
 

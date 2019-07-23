@@ -3,6 +3,7 @@ package io.eb.svr.handler.controller
 import io.eb.svr.common.config.ApiConfig.ALL_PATH
 import io.eb.svr.common.config.ApiConfig.API_VERSION
 import io.eb.svr.common.config.ApiConfig.EMPLOYEES_PATH
+import io.eb.svr.common.config.ApiConfig.EXPERT_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
 import io.eb.svr.handler.entity.request.EmployeeRequest
 import io.eb.svr.handler.service.EmployeeService
@@ -27,10 +28,18 @@ class EmployeeController {
 	@GetMapping(
 		path = ["/$ALL_PATH/{shopId}"],
 		produces = [APPLICATION_JSON_VALUE])
-	fun getEmployeesByShop(
+	fun getAllEmployeesByShop(
 		servlet: HttpServletRequest,
 		@PathVariable("shopId") shopId: Long
-	) = ResponseEntity.status(OK).body(employeeService.getShopEmployees(servlet, shopId))
+	) = ResponseEntity.status(OK).body(employeeService.getAllEmployeesByShop(servlet, shopId))
+
+	@GetMapping(
+		path = ["/$EXPERT_PATH/{shopId}"],
+		produces = [APPLICATION_JSON_VALUE])
+	fun getExpertEmployeesByShop(
+		servlet: HttpServletRequest,
+		@PathVariable("shopId") shopId: Long
+	) = ResponseEntity.status(OK).body(employeeService.getExpertEmployeesByShop(servlet, shopId))
 
 	@PutMapping(
 		consumes = [APPLICATION_JSON_VALUE],

@@ -9,3 +9,11 @@ enum class EmployeeStatus(val type: String, val desc: String) {
 	STOP("STOP", "휴직"),
 	REING("REING", "복직")
 }
+
+enum class ServiceAppointmentStatus(val type: String, val desc: String) {
+	BOOKING("BOOKING", "예약"),
+	COMPLETE("COMPLETE", "시술"),
+	NOSHOW("NOSHOW", "노쇼"),
+	CANCEL("CANCEL", "취소")
+}
+

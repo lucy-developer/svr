@@ -2,6 +2,7 @@ package io.eb.svr.model.repository
 
 import io.eb.svr.model.entity.*
 import io.eb.svr.model.enums.Days
+import io.eb.svr.model.enums.ShopRole
 import io.eb.svr.model.enums.TimeType
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -26,6 +27,9 @@ interface B2BUserShopRepository : JpaRepository<B2BUserShop, B2BUserShop.B2BUser
 		userId: Long, startDate: LocalDate, endDate: LocalDate) : B2BUserShop?
 
 	fun findB2BUserShopsByB2BUserShopPKStoreId(storeId: Long) : List<B2BUserShop>
+
+	fun findB2BUserShopsByB2BUserShopPKStoreIdAndJoinDateLessThanEqualAndLeaveDateGreaterThanEqualAndShopRoleNotIn(
+		storeId: Long, startDate: LocalDate, endDate: LocalDate, roles: List<ShopRole>) : List<B2BUserShop>
 }
 
 @Repository
@@ -33,7 +37,6 @@ interface ShopSettingItemRepository: JpaRepository<ShopSettingItem, ShopSettingI
 	fun findShopSettingItemsByShopSettingItemPKStoreId(storeId: Long): List<ShopSettingItem>
 
 	fun findShopSettingItemsByShopSettingItemPKStoreIdAndShopSettingItemPKItemCode(storeId: Long, itemCode: String): ShopSettingItem?
-
 }
 
 @Repository

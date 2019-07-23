@@ -9,6 +9,7 @@ import io.eb.svr.model.entity.EmployeeHistory
 import io.eb.svr.model.entity.EmployeeWorkTime
 import io.eb.svr.model.enums.Days
 import io.eb.svr.model.enums.EmployeeStatus
+import io.eb.svr.model.enums.ShopRole
 import io.eb.svr.model.repository.B2BUserShopRepository
 import io.eb.svr.model.repository.EmployeeHistoryRepository
 import io.eb.svr.model.repository.EmployeeWorkTimeRepository
@@ -51,8 +52,15 @@ class EmployeeService {
 	}
 
 	@Throws(CustomException::class)
-	fun getShopEmployees(servlet: HttpServletRequest, shopId: Long) : List<B2BUserShop> {
+	fun getAllEmployeesByShop(servlet: HttpServletRequest, shopId: Long) : List<B2BUserShop> {
 		return b2BUserShopRepository.findB2BUserShopsByB2BUserShopPKStoreId(shopId)
+	}
+
+	@Throws(CustomException::class)
+	fun getExpertEmployeesByShop(servlet: HttpServletRequest, shopId: Long) : List<B2BUserShop> {
+		val roles: List<ShopRole> = listOf(ShopRole.STAFF)
+		return b2BUserShopRepository.findB2BUserShopsByB2BUserShopPKStoreIdAndJoinDateLessThanEqualAndLeaveDateGreaterThanEqualAndShopRoleNotIn(
+			shopId, DateUtil.stringToLocalDate(DateUtil.nowDate), DateUtil.stringToLocalDate(DateUtil.nowDate), roles)
 	}
 
 //	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -155,7 +163,7 @@ class EmployeeService {
 			}
 		}
 
-		request.role?.let { userShop!!.shopRole = request.role!! }
+		request.role?.let { userShop!!.shopRole = request.role }
 		request.nickName?.let { userShop!!.nickName = request.nickName }
 		request.position?.let { userShop!!.position = request.position }
 		createB2BUserInShop(userShop!!)
