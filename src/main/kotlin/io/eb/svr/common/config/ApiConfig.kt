@@ -41,6 +41,11 @@ object ApiConfig {
 	const val CODE_PATH = "code"
 	const val ALL_PATH = "all"
 	const val SERVICE_PATH = "service"
+	const val EXPERT_PATH = "expert"
+	const val MOBILE_PATH = "mobile"
+	const val APPOINTMENT_PATH = "appointment"
+	const val RENDER_PATH = "render"
+	const val CHECK_PATH = "check"
 
 
 

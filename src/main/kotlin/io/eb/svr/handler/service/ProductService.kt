@@ -1,12 +1,17 @@
 package io.eb.svr.handler.service
 
+import io.eb.svr.common.util.DateUtil
 import io.eb.svr.exception.AlreadyExistsException
 import io.eb.svr.exception.CustomException
 import io.eb.svr.exception.ResourceNotFoundException
 import io.eb.svr.handler.entity.request.ServiceProductRequest
+import io.eb.svr.handler.entity.request.ServiceAppointmentRequest
+import io.eb.svr.model.entity.ServiceAppointment
 import io.eb.svr.model.entity.ServiceProduct
 import io.eb.svr.model.entity.ServiceProductSale
-import io.eb.svr.model.enums.ProductSaleType
+import io.eb.svr.model.entity.Store
+import io.eb.svr.model.enums.ServiceAppointmentStatus
+import io.eb.svr.model.repository.ServiceAppointmentRepository
 import io.eb.svr.model.repository.ServiceProductRepository
 import io.eb.svr.model.repository.ServiceProductSaleRepository
 import mu.KLogging
@@ -27,6 +32,9 @@ class ProductService {
 
 	@Autowired
 	private lateinit var serviceProductSaleRepository: ServiceProductSaleRepository
+
+	@Autowired
+	private lateinit var serviceAppointmentRepository: ServiceAppointmentRepository
 
 	@Autowired
 	private lateinit var shopService: ShopService
@@ -89,4 +97,60 @@ class ProductService {
 		serviceProductRepository.findServiceProductsByShopIdAndNameAndDeleteYn(shopId, name, "N")?.let { return true }
 		return false
 	}
+
+	@Throws(CustomException::class)
+	fun createServiceProductRender(servlet: HttpServletRequest, request: ServiceAppointmentRequest) = with(request) {
+		// 예약 가능 시술 확인
+		shopService.searchShopById(shopId).let { shop ->
+			val serviceAppointment = ServiceAppointment(
+				id = -1,
+				shopId = shopId,
+				employeeId = employeeId,
+				customerId = userId,
+				productId = productId,
+				status = ServiceAppointmentStatus.BOOKING,
+				startDate = DateUtil.stringToLocalDateTime(appointmentDate),
+				endDate = DateUtil.getAddMinutes(DateUtil.stringToLocalDateTime(appointmentDate), duration),
+				duration = duration
+			)
+			serviceAppointmentRepository.save(serviceAppointment)
+		}
+	}
+
+	@Throws(CustomException::class)
+	fun checkServiceAppointment(servlet: HttpServletRequest, request: ServiceAppointmentRequest) = with(request) {
+		shopService.searchShopById(shopId).let { shop ->
+			if (!checkServiceAppointmentIsPossible(shop, request)) {
+				throw CustomException("Service Appointment Registration failure", HttpStatus.CONFLICT)
+			}
+		}
+	}
+
+	fun checkServiceAppointmentIsPossible(shop: Store, request: ServiceAppointmentRequest) : Boolean {
+		logger.debug { "checkServiceAppointmentIsPossible start :"+ DateUtil.stringToLocalDateTime(request.appointmentDate)+" end :"+ DateUtil.getAddMinutes(DateUtil.stringToLocalDateTime(request.appointmentDate), request.duration)}
+		val svrAppointList = serviceAppointmentRepository.checkServiceAppointments(
+			request.shopId, request.employeeId,
+			//request.appointmentDate, DateUtil.getAddMinutes(request.appointmentDate, request.duration)
+			DateUtil.stringToLocalDateTime(request.appointmentDate), DateUtil.getAddMinutes(DateUtil.stringToLocalDateTime(request.appointmentDate), request.duration)
+		)
+
+		if (svrAppointList.isEmpty()) return true
+
+		shop.concurrentAppointment?.let {
+			if (shop.concurrentAppointment!! >= svrAppointList.count()) return false
+		} ?: run {
+			return false
+		}
+
+		shop.startAppointmentDuplicate?.let {
+			if (shop.startAppointmentDuplicate.equals("N")) {
+				if (serviceAppointmentRepository.countServiceAppointmentsByShopIdAndEmployeeIdAndStartDate(request.shopId, request.employeeId,DateUtil.stringToLocalDateTime(request.appointmentDate)) > 0) {
+					return false
+				}
+			}
+		}
+
+		return true
+	}
+
 }

@@ -13,6 +13,8 @@ import java.util.*
 //@SuppressLint("SimpleDateFormat")
 object DateUtil {
 
+	private const val DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
+
 	val nowDateTime: String
 		get() {
 			val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -52,11 +54,20 @@ object DateUtil {
 		return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 	}
 
+	fun formatDateTime(dateTime: LocalDateTime, timePattern: String = DATE_TIME_PATTERN): String {
+		return dateTime.format(DateTimeFormatter.ofPattern(timePattern))
+	}
+
+
 	fun getAddDays(date: LocalDate, amount: Long): LocalDate {
 		return date.plusDays(amount)
 	}
 
 	fun getAddDays(date: LocalDateTime, amount: Long): LocalDateTime {
 		return date.plusDays(amount)
+	}
+
+	fun getAddMinutes(date: LocalDateTime, amount: Long): LocalDateTime {
+		return date.plusMinutes(amount)
 	}
 }

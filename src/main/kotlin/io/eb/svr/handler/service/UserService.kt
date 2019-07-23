@@ -7,6 +7,7 @@ import io.eb.svr.model.repository.UserRepository
 import mu.KLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import javax.servlet.http.HttpServletRequest
 
 /**
  * Create by lucy on 2019-06-25
@@ -31,6 +32,11 @@ class UserService {
 	@Throws(CustomException::class)
 	fun existsByEmail(request: CheckAccountRequest) : Boolean {
 		return userRepository.existsUsersByEmail(request.email)
+	}
+
+	@Throws(CustomException::class)
+	fun findByUserMobile3(servlet: HttpServletRequest, mobile3: String) : List<User> {
+		return userRepository.findUsersByMobile3(mobile3)
 	}
 
 	@Throws(CustomException::class)

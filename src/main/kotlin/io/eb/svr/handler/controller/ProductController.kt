@@ -1,10 +1,13 @@
 package io.eb.svr.handler.controller
 
 import io.eb.svr.common.config.ApiConfig.API_VERSION
+import io.eb.svr.common.config.ApiConfig.APPOINTMENT_PATH
+import io.eb.svr.common.config.ApiConfig.CHECK_PATH
 import io.eb.svr.common.config.ApiConfig.PRODUCT_PATH
 import io.eb.svr.common.config.ApiConfig.SERVICE_PATH
 import io.eb.svr.common.config.ApiConfig.SHOP_PATH
 import io.eb.svr.handler.entity.request.ServiceProductRequest
+import io.eb.svr.handler.entity.request.ServiceAppointmentRequest
 import io.eb.svr.handler.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -41,6 +44,25 @@ class ProductController {
 		servlet: HttpServletRequest,
 		@RequestBody request: ServiceProductRequest
 	) = ResponseEntity.status(HttpStatus.CREATED).body(productService.createServiceProduct(servlet, request))
+
+	@GetMapping(
+		path = ["/$SERVICE_PATH/$APPOINTMENT_PATH/$CHECK_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE])
+	fun checkServiceAppointment(
+		servlet: HttpServletRequest,
+		@RequestBody request: ServiceAppointmentRequest
+	) = ResponseEntity.status(OK).body(productService.checkServiceAppointment(servlet, request))
+
+	@PostMapping(
+		path = ["/$SERVICE_PATH/$APPOINTMENT_PATH"],
+		consumes = [APPLICATION_JSON_VALUE],
+		produces = [APPLICATION_JSON_VALUE])
+	fun createServiceProductRender(
+		servlet: HttpServletRequest,
+		@RequestBody request: ServiceAppointmentRequest
+	) = ResponseEntity.status(HttpStatus.CREATED).body(productService.createServiceProductRender(servlet, request))
+
 
 
 
